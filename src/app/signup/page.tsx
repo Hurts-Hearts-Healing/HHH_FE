@@ -18,7 +18,7 @@ export default function Login() {
     if (isBirthdayActive === null) {
         return null;
     }
-    
+
     return (
         <Wrapper>
             <Image src={Logo} alt="HHH" style={{width: 75, marginTop: 117}}/>
@@ -48,7 +48,7 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 90vh;
+    height: 100vh
 `;
 
 const InputWrapper = styled.div`
@@ -60,12 +60,9 @@ const InputWrapper = styled.div`
 `;
 
 const ButtonWrapper = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
     width: 100%;
     margin-top: auto;
+    margin-bottom: 76px;
 `;
 
 const BirthdayInput = styled.div<{$isBirthdayActive: boolean}>`
