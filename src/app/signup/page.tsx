@@ -15,12 +15,11 @@ export default function Login() {
         <Wrapper>
             <Image src={Logo} alt="HHH" style={{width: 75, marginTop: 117}}/>
             <InputWrapper>
-                <AuthInput type="name" placeholder="이름을 입력하세요"/>
+                <AuthInput type="text" placeholder="이름을 입력하세요"/>
                 <AuthInput type="email" placeholder="이메일을 입력하세요"/>
                 <BirthdayInput 
-                    $isActive={isBirthdayActive} 
+                    $isBirthdayActive={isBirthdayActive} 
                     onClick={() => setIsBirthdayActive(true)} 
-                    // onBlur={() => setIsBirthdayActive(false)}
                     tabIndex={0}
                 >
                     생일을 입력하세요
@@ -28,11 +27,7 @@ export default function Login() {
                 <AuthInput type="password" placeholder="비밀번호를 입력하세요"/>
             </InputWrapper>
             <ButtonWrapper>
-                <AuthButton text="로그인"/>
-                <SignUpButtonWrapper>
-                    <p>아직 회원이 아니신가요?</p>
-                    <p className="highLight">회원가입</p>
-                </SignUpButtonWrapper>
+                <AuthButton text="회원가입"/>
             </ButtonWrapper>
             {isBirthdayActive && <BottomSheet onClose={() => setIsBirthdayActive(false)}/>}
         </Wrapper>
@@ -65,19 +60,7 @@ const ButtonWrapper = styled.div`
     margin-top: auto;
 `;
 
-const SignUpButtonWrapper = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    > p {
-        font-size: 13px;
-    }
-    .highLight {
-        color: #18E7C1;
-    }
-`;
-
-const BirthdayInput = styled.div<{$isActive: boolean}>`
+const BirthdayInput = styled.div<{$isBirthdayActive: boolean}>`
     display: flex;
     align-items: center;
     width: 100%;
@@ -87,5 +70,5 @@ const BirthdayInput = styled.div<{$isActive: boolean}>`
     padding-left: 15px;
     border-radius: 5px;
     color: rgba(255, 255, 255, 0.5);
-    border: ${({ $isActive }) => ($isActive ? "1px solid #18E7C1" : "")};
+    border: ${({ $isBirthdayActive }) => ($isBirthdayActive ? "1px solid #18E7C1" : "")};
 `;
