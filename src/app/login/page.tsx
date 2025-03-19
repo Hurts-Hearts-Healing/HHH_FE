@@ -5,8 +5,18 @@ import AuthInput from "@/components/auth/input"
 import AuthButton from "@/components/auth/button"
 import Image from "next/image"
 import Logo from "../../assets/imgs/logo.svg";
+import { useState, useEffect } from "react"
 
 export default function Login() {
+    const [isMounted, setIsMounted] = useState(false); 
+
+    useEffect(() => {
+        setIsMounted(true); 
+    }, []);
+
+    if (!isMounted) {
+        return null;
+    }
     return (
         <Wrapper>
             <Image src={Logo} alt="HHH" style={{width: 75, marginTop: 117}}/>
@@ -31,7 +41,7 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 90vh;
+    height: 100vh;
 `;
 
 const InputWrapper = styled.div`
@@ -49,6 +59,7 @@ const ButtonWrapper = styled.div`
     gap: 10px;
     width: 100%;
     margin-top: auto;
+    margin-bottom: 76px;
 `;
 
 const SignUpButtonWrapper = styled.div`
