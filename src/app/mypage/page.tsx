@@ -8,6 +8,7 @@ import Diary from "../../assets/imgs/mypage/diary.svg";
 import Advertisement from "../../assets/imgs/mypage/advertisement.svg";
 import Leave from "../../assets/imgs/mypage/leave.svg";
 import Arrow from "../../assets/imgs/mypage/arrow.svg";
+import NavigationBar from "@/components/common/navigationBar";
 
 export default function MyPage() {
     return (
@@ -59,6 +60,7 @@ export default function MyPage() {
                     </OptionWrapper>
                 </ListWrapper>
             </ContentWrapper>
+            <NavigationBar/>
         </Wrapper>
     )
 }
@@ -68,6 +70,8 @@ const Wrapper = styled.div`
     flex-direction: column;
     padding-left: 20px;
     padding-right: 20px;
+    height: 100vh;
+    width: 100%;
 `;
 
 const ContentWrapper = styled.div`
@@ -141,6 +145,9 @@ const HeadWrapper = styled.div`
     display: flex;
     align-items: center;
     gap: 13px;
+    > p {
+        font-size: 15px;
+    }
     .point {
         color: #FF5151;
     }
