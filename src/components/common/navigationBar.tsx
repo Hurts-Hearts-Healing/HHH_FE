@@ -1,10 +1,6 @@
 "use client"
 
 import styled from "styled-components"
-import Image from "next/image";
-import Graph from "../../assets/imgs/navigation/graph.svg";
-import Home from "../../assets/imgs/navigation/home.svg";
-import Person from "../../assets/imgs/navigation/person.svg";
 import { GraphIcon } from "./Icon";
 import { HomeIcon } from "./Icon";
 import { PersonIcon } from "./Icon";

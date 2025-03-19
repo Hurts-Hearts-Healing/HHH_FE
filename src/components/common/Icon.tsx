@@ -2,8 +2,8 @@
 
 export const GraphIcon = ({isActive}: {isActive: boolean}) => (
     <svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1.5 1V13.2727C1.5 13.996 1.78734 14.6897 2.2988 15.2012C2.81026 15.7127 3.50396 16 4.22727 16H16.5" stroke={isActive ? "#18E7C1" : "#DEDEDE"} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M4.22729 10.9999L8.3182 6.909L11.5 10.0908L16.5 5.09082" stroke={isActive ? "#18E7C1" : "#DEDEDE"} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M1.5 1V13.2727C1.5 13.996 1.78734 14.6897 2.2988 15.2012C2.81026 15.7127 3.50396 16 4.22727 16H16.5" stroke={isActive ? "#18E7C1" : "#DEDEDE"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M4.22729 10.9999L8.3182 6.909L11.5 10.0908L16.5 5.09082" stroke={isActive ? "#18E7C1" : "#DEDEDE"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
 )
 
