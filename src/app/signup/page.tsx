@@ -6,11 +6,19 @@ import AuthButton from "@/components/auth/button"
 import Image from "next/image"
 import Logo from "../../assets/imgs/logo.svg";
 import BottomSheet from "@/components/auth/bottomSheet"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 export default function Login() {
-    const [isBirthdayActive, setIsBirthdayActive] = useState<boolean>(false);
+    const [isBirthdayActive, setIsBirthdayActive] = useState<boolean | null>(null);
 
+    useEffect(() => {
+        setIsBirthdayActive(false);
+    }, []);
+
+    if (isBirthdayActive === null) {
+        return null;
+    }
+    
     return (
         <Wrapper>
             <Image src={Logo} alt="HHH" style={{width: 75, marginTop: 117}}/>
