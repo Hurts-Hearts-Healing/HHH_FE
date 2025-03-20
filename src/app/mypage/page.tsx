@@ -80,7 +80,7 @@ const ContentWrapper = styled.div`
     gap: 25px;
 `;
 
-const TitleWrapper = styled.p`
+const TitleWrapper = styled.div`
     display: flex;
     align-items: center;
     margin-top: 17px;
