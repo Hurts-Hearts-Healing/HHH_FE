@@ -9,8 +9,16 @@ import Advertisement from "../../assets/imgs/mypage/advertisement.svg";
 import Leave from "../../assets/imgs/mypage/leave.svg";
 import Arrow from "../../assets/imgs/mypage/arrow.svg";
 import NavigationBar from "@/components/common/navigationBar";
+import { useState } from "react";
+import Modal from "@/components/modal";
 
 export default function MyPage() {
+    const [showModal, setShowModal] = useState<boolean>(false);
+
+    const handleButtonClick = () => {
+        setShowModal(true);
+    }
+
     return (
         <Wrapper>
             <Image src={Logo} alt="HHH" style={{width: '75px', marginTop: '18px'}}/>
@@ -48,7 +56,7 @@ export default function MyPage() {
                             <Image src={Arrow} alt=">" />
                         </EndWrapper>
                     </OptionWrapper>
-                    <OptionWrapper>
+                    <OptionWrapper onClick={handleButtonClick}>
                         <HeadWrapper>
                             <Image src={Leave} alt="" style={{width: 20}}/>
                             <p className="point">회원 탈퇴</p>
@@ -61,6 +69,7 @@ export default function MyPage() {
                 </ListWrapper>
             </ContentWrapper>
             <NavigationBar/>
+            {showModal && <Modal onClose={() => setShowModal(false)}/>}
         </Wrapper>
     )
 }
