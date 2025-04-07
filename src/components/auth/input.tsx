@@ -60,6 +60,7 @@ const InputWrapper = styled.div`
     align-items: flex-start;
     position: relative;
     /* gap: 5px; */
+    width: 100%;
 `;
 
 const ErrorMessage = styled.p`
