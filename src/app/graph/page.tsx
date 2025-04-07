@@ -23,9 +23,9 @@ export default function Graph() {
       </TitleLine>
       <GraphWrapper>
         <ButtonWrapper>
-          <Day onDayView={true}>일</Day>
-          <Week onWeekView={false}>주</Week>
-          <Month onMonthView={false}>월</Month>
+          <Day $onDayView={true}>일</Day>
+          <Week $onWeekView={false}>주</Week>
+          <Month $onMonthView={false}>월</Month>
         </ButtonWrapper>
         <GraphContainer></GraphContainer>
       </GraphWrapper>
@@ -116,7 +116,7 @@ const PolS = styled.p<{
 `;
 
 const Day = styled.div<{
-  onDayView: boolean;
+  $onDayView: boolean;
 }>`
   display: flex;
   border-radius: 8px;
@@ -127,12 +127,12 @@ const Day = styled.div<{
   font-size: 13.5px;
   font-weight: bold;
   border: none;
-  background-color: ${(props) => (props.onDayView ? "#18e7c1" : "#414142")};
-  color: ${(props) => (props.onDayView ? "#fff" : "#888888")};
+  background-color: ${(props) => (props.$onDayView ? "#18e7c1" : "#414142")};
+  color: ${(props) => (props.$onDayView ? "#fff" : "#888888")};
 `;
 
 const Week = styled.div<{
-  onWeekView: boolean;
+  $onWeekView: boolean;
 }>`
   display: flex;
   border-radius: 8px;
@@ -143,12 +143,12 @@ const Week = styled.div<{
   font-size: 13.5px;
   font-weight: bold;
   border: none;
-  background-color: ${(props) => (props.onWeekView ? "#18e7c1" : "#414142")};
-  color: ${(props) => (props.onWeekView ? "#fff" : "#888888")};
+  background-color: ${(props) => (props.$onWeekView ? "#18e7c1" : "#414142")};
+  color: ${(props) => (props.$onWeekView ? "#fff" : "#888888")};
 `;
 
 const Month = styled.div<{
-  onMonthView: boolean;
+  $onMonthView: boolean;
 }>`
   display: flex;
   border-radius: 8px;
@@ -159,8 +159,8 @@ const Month = styled.div<{
   font-size: 13.5px;
   font-weight: bold;
   border: none;
-  background-color: ${(props) => (props.onMonthView ? "#18e7c1" : "#414142")};
-  color: ${(props) => (props.onMonthView ? "#fff" : "#888888")};
+  background-color: ${(props) => (props.$onMonthView ? "#18e7c1" : "#414142")};
+  color: ${(props) => (props.$onMonthView ? "#fff" : "#888888")};
 `;
 
 const GraphWrapper = styled.div`
