@@ -8,24 +8,32 @@ import { Value } from "react-calendar/src/shared/types.js";
 
 interface BottomSheetProps {
     onClose: () => void;
+    onSelectDate: (date: string) => void;
 }
 
-export default function BottomSheet({onClose}: BottomSheetProps) {
+export default function BottomSheet({onClose, onSelectDate}: BottomSheetProps) {
     const [isClosing, setIsClosing] = useState<boolean>(false);
     const [, setSelectedDate] = useState<string | null>(null);
 
     const handleDateClick = (value: Value) => {
         if (value instanceof Date) {
-            const formattedDate = value.toLocaleDateString();
+            const formattedDate = `${value.getFullYear()}년 ${value.getMonth() + 1}월 ${value.getDate()}일`;
             setSelectedDate(formattedDate);
+            onSelectDate(formattedDate)
             setIsClosing(true);  
             setTimeout(onClose, 300);
         }
     };
 
     return (
-        <BottomSheetWrapper $isClosing={isClosing}>
-            <Wrapper >
+        <BottomSheetWrapper 
+            onClick={() => {
+                setIsClosing(true);
+                setTimeout(onClose, 300)
+            }}
+            $isClosing={isClosing}
+        >
+            <Wrapper onClick={(e) => e.stopPropagation()}>
                 <StyledCalendar 
                     onChange={handleDateClick}
                     formatMonthYear={(locale, date) => {
@@ -33,7 +41,7 @@ export default function BottomSheet({onClose}: BottomSheetProps) {
                     const month = (date.getMonth() + 1).toString().padStart(2, '0');
                     return `${year}.${month}`;}}
                     formatDay={(locale, date) => date.toLocaleString("en", {day: "numeric"})}
-                    minDetail="month"
+                    maxDetail="month"
                 />
             </Wrapper>
         </BottomSheetWrapper>
@@ -67,7 +75,6 @@ const Wrapper = styled.div`
     padding: 35px;
     background-color: #242424;
     border-radius: 40px 40px 0 0;
-    /* animation: fade_up 0.3s ease-out; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -94,6 +101,11 @@ const StyledCalendar = styled(Calendar)`
         align-items: center;
         box-sizing: border-box;
         padding: 0;
+    }
+    .react-calendar__year-view__months__month {
+        font-family: pretendard;
+        font-size: 16px;
+        color: white;
     }
     .react-calendar__tile:enabled:hover {
         background-color: none !important;

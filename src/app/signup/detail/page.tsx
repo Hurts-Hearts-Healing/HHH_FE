@@ -11,6 +11,7 @@ import ProgressBar from "@/components/progressBar";
 export default function SignUpDetail() {
     const [percent, setPercent] = useState<number>(0);
     const [isPartingActive, setIsPartingActive] = useState<boolean | null>(null);
+    const [parting, setParting] = useState<string | null>(null);
     
     useEffect(() => {
         setIsPartingActive(false);
@@ -38,11 +39,12 @@ export default function SignUpDetail() {
                         <p>하셨나요?</p>
                     </Label>
                     <PartingInput
+                        $hasPartingSelect={!!parting}
                         $isPartingActive={isPartingActive} 
                         onClick={() => setIsPartingActive(true)} 
                         tabIndex={0}
                     >
-                        날짜 선택하기
+                        {parting ?? '날짜 선택하기'}
                     </PartingInput>
                 </InputWrapper>
                 <InputWrapper>
@@ -62,7 +64,7 @@ export default function SignUpDetail() {
             <ButtonWrapper>
                 <AuthButton text="등록"/>
             </ButtonWrapper>
-            {isPartingActive && <BottomSheet onClose={() => setIsPartingActive(false)}/>}
+            {isPartingActive && <BottomSheet onSelectDate={(date) => setParting(date)} onClose={() => setIsPartingActive(false)}/>}
         </Wrapper>
     )
 }
@@ -100,7 +102,7 @@ const InputWrapper =styled.div`
     gap: 10px;
 `;
 
-const PartingInput = styled.div<{$isPartingActive: boolean}>`
+const PartingInput = styled.div<{$isPartingActive: boolean, $hasPartingSelect: boolean}>`
     display: flex;
     align-items: center;
     width: 100%;
@@ -110,6 +112,7 @@ const PartingInput = styled.div<{$isPartingActive: boolean}>`
     padding-left: 15px;
     border-radius: 5px;
     color: rgba(255, 255, 255, 0.5);
+    color: ${({$hasPartingSelect}) => ($hasPartingSelect ? 'white' : 'rgba(255, 255, 255, 0.5)')};
     border: ${({ $isPartingActive }) => ($isPartingActive ? "1px solid #18E7C1" : "")};
 `;
 

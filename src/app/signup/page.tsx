@@ -20,6 +20,7 @@ export default function Login() {
     const [status, setStatus] = useState<EmailStatus>('INITIAL');
     const [timer, setTimer] = useState<number>(60);
     const [isBirthdayActive, setIsBirthdayActive] = useState<boolean | null>(null);
+    const [birthday, setBirthday] = useState<string | null>(null);
     const emailRegEx = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/
 
     useEffect(() => {
@@ -119,19 +120,20 @@ export default function Login() {
                     </EmailInputWrapper>
                     <EmailButton $textColor={getTextColor()} $bgColor={getButtonColor()} onClick={handleButtonClick} disabled={isDisabled}>{getButtonText()}</EmailButton>
                 </EmailWrapper>
-                <BirthdayInput 
+                <BirthdayInput
+                    $hasBirthdaySelect={!!birthday}
                     $isBirthdayActive={isBirthdayActive} 
                     onClick={() => setIsBirthdayActive(true)} 
                     tabIndex={0}    
                 >
-                    생일을 입력하세요
+                    {birthday ?? '생일을 입력하세요'}
                 </BirthdayInput>
                 <AuthInput type="password" placeholder="비밀번호를 입력하세요"/>
             </InputWrapper>
             <ButtonWrapper>
                 <AuthButton text="회원가입"/>
             </ButtonWrapper>
-            {isBirthdayActive && <BottomSheet onClose={() => setIsBirthdayActive(false)}/>}
+            {isBirthdayActive && <BottomSheet onSelectDate={(date) => setBirthday(date)} onClose={() => setIsBirthdayActive(false)}/>}
         </Wrapper>
     )
 }
@@ -178,7 +180,7 @@ const ButtonWrapper = styled.div`
     margin-bottom: 76px;
 `;
 
-const BirthdayInput = styled.div<{$isBirthdayActive: boolean}>`
+const BirthdayInput = styled.div<{$isBirthdayActive: boolean, $hasBirthdaySelect: boolean}>`
     display: flex;
     align-items: center;
     width: 100%;
@@ -187,7 +189,8 @@ const BirthdayInput = styled.div<{$isBirthdayActive: boolean}>`
     height: 40px;
     padding-left: 15px;
     border-radius: 5px;
-    color: rgba(255, 255, 255, 0.5);
+    /* color: rgba(255, 255, 255, 0.5); */
+    color: ${({$hasBirthdaySelect}) => ($hasBirthdaySelect ? 'white' : 'rgba(255, 255, 255, 0.5)')};
     border: ${({ $isBirthdayActive }) => ($isBirthdayActive ? "1px solid #18E7C1" : "")};
 `;
 
