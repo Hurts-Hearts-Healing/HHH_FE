@@ -13,10 +13,17 @@ const InputBox = styled.textarea`
   border: none;
   background-color: #414142;
   color: #fff;
-  padding: 12px 5px 0px 15px;
+  padding: 15px 15px 15px 15px;
   letter-spacing: -0.32px;
   resize: none;
   outline: none;
   font-size: 13px;
   font-family: "pretendard";
+  box-sizing: border-box;
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  &:focus {
+    border: 1px solid #18E7C1;
+  }
 `;

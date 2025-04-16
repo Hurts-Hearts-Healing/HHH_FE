@@ -2,14 +2,14 @@
 
 import styled from "styled-components";
 import HashBoard from "@/components/home/hash";
-import TitleInput from "@/components/home/titleInput";
 import ContentInput from "@/components/home/contentInput";
 import NavigationBar from "@/components/common/navigationBar";
 import Image from "next/image";
 import Logo from "../assets/imgs/logo.svg";
-import Happy from "../assets/imgs/home/happy.png";
-import Soso from "../assets/imgs/home/soso.png";
-import Sad from "../assets/imgs/home/sad.png";
+import Happy from "../assets/imgs/home/happy.svg";
+import Soso from "../assets/imgs/home/soso.svg";
+import Sad from "../assets/imgs/home/sad.svg";
+import AuthInput from "@/components/auth/input";
 
 export default function Home() {
   return (
@@ -23,6 +23,11 @@ export default function Home() {
           icon={"🧇"}
           contents={"오늘의 감정 AI로 알아봐요"}
           tag={"감정"}
+        />
+        <HashBoard
+          icon={"📐"}
+          contents={"내 감정 변화 그래프로"}
+          tag={"변화"}
         />
       </Slider>
       <DailyDiaryWrapper>
@@ -42,7 +47,7 @@ export default function Home() {
         </EmotionFrame>
         <DiaryTitleWrapper>
           <DiaryTitle>제목</DiaryTitle>
-          <TitleInput />
+          <AuthInput placeholder="일기 제목을 입력하세요."/>
         </DiaryTitleWrapper>
         <DiaryContentWrapper>
           <DiaryTitle>감정 기록</DiaryTitle>
@@ -58,8 +63,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 5px 20px;
-  height: 100vh;
+  padding: 5px 20px 104px 20px;
 `;
 
 const LogoLine = styled.div`
@@ -74,6 +78,7 @@ const Slider = styled.div`
   width: auto;
   height: 164px;
   gap: 20px;
+  overflow-x: auto;
 `;
 
 const DailyDiaryWrapper = styled.div`
