@@ -4,9 +4,9 @@ import styled from "styled-components";
 import NavigationBar from "@/components/common/navigationBar";
 import Image from "next/image";
 import LogoLHL from "../../assets/imgs/logolhl.svg";
-import Happy from "../../assets/imgs/home/happy.png";
-import Soso from "../../assets/imgs/home/soso.png";
-import Sad from "../../assets/imgs/home/sad.png";
+import Happy from "../../assets/imgs/home/happy.svg";
+import Soso from "../../assets/imgs/home/soso.svg";
+import Sad from "../../assets/imgs/home/sad.svg";
 
 export default function Graph() {
   return (

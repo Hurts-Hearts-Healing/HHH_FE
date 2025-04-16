@@ -1,15 +1,15 @@
 "use client";
 
 import styled from "styled-components";
-import HashBoard from "@/components/home/hash";
-import TitleInput from "@/components/home/titleInput";
 import ContentInput from "@/components/home/contentInput";
 import NavigationBar from "@/components/common/navigationBar";
 import Image from "next/image";
 import Logo from "../assets/imgs/logo.svg";
-import Happy from "../assets/imgs/home/happy.png";
-import Soso from "../assets/imgs/home/soso.png";
-import Sad from "../assets/imgs/home/sad.png";
+import Happy from "../assets/imgs/home/happy.svg";
+import Soso from "../assets/imgs/home/soso.svg";
+import Sad from "../assets/imgs/home/sad.svg";
+import AuthInput from "@/components/auth/input";
+import AuthButton from "@/components/auth/button";
 
 export default function Home() {
   return (
@@ -17,14 +17,6 @@ export default function Home() {
       <LogoLine>
         <Image src={Logo} alt="HHH" style={{ width: 75 }} />
       </LogoLine>
-      <Slider>
-        <HashBoard icon={"🛹"} contents={"어제보다 나은 나"} tag={"성장"} />
-        <HashBoard
-          icon={"🧇"}
-          contents={"오늘의 감정 AI로 알아봐요"}
-          tag={"감정"}
-        />
-      </Slider>
       <DailyDiaryWrapper>
         <TitleBar>
           <Title>
@@ -33,7 +25,6 @@ export default function Home() {
             <Pol color={"Mint"}>내 마음</Pol>
             <Pol>은 어떤가요?</Pol>
           </Title>
-          <SaveButton>저장</SaveButton>
         </TitleBar>
         <EmotionFrame>
           <Image src={Happy} alt="happy" style={{ width: 47 }} />
@@ -42,12 +33,13 @@ export default function Home() {
         </EmotionFrame>
         <DiaryTitleWrapper>
           <DiaryTitle>제목</DiaryTitle>
-          <TitleInput />
+          <AuthInput placeholder="일기 제목을 입력하세요."/>
         </DiaryTitleWrapper>
         <DiaryContentWrapper>
           <DiaryTitle>감정 기록</DiaryTitle>
           <ContentInput />
         </DiaryContentWrapper>
+        <AuthButton text="저장" />
       </DailyDiaryWrapper>
       <NavigationBar />
     </Wrapper>
@@ -58,22 +50,13 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 5px 20px;
-  height: 100vh;
+  padding: 5px 20px 104px 20px;
 `;
 
 const LogoLine = styled.div`
   display: flex;
   width: 100%;
   height: auto;
-`;
-
-const Slider = styled.div`
-  display: flex;
-  margin-top: 13px;
-  width: auto;
-  height: 164px;
-  gap: 20px;
 `;
 
 const DailyDiaryWrapper = styled.div`
@@ -95,19 +78,6 @@ const Title = styled.div`
   display: flex;
 `;
 
-const SaveButton = styled.button`
-  width: 51.6px;
-  height: 25.2px;
-  border-radius: 36px;
-  background-color: #18e7c1;
-  font-family: "pretendard";
-  color: #414142;
-  font-size: 12px;
-  letter-spacing: -0.38px;
-  font-weight: 500;
-  border: none;
-`;
-
 const Pol = styled.p<{
   color?: string;
 }>`
@@ -124,7 +94,7 @@ const EmotionFrame = styled.div`
   display: flex;
   background-color: #414142;
   border-radius: 30px;
-  height: 105px;
+  height: 90px;
   justify-content: center;
   align-items: center;
   gap: 44px;
@@ -152,4 +122,5 @@ const DiaryContentWrapper = styled.div`
   width: 100%;
   gap: 5px;
   margin-top: 20px;
+  margin-bottom: 20px;
 `;

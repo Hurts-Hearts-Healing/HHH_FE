@@ -59,7 +59,6 @@ const InputWrapper = styled.div`
     flex-direction: column;
     align-items: flex-start;
     position: relative;
-    /* gap: 5px; */
     width: 100%;
 `;
 
@@ -80,6 +79,7 @@ const Input = styled.input<{ $paddingRight: string }>`
     outline: none;
     border: none;
     color: white;
+    box-sizing: border-box;
     &:focus {
         border: 1px solid #18E7C1;
     }

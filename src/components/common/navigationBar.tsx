@@ -5,9 +5,12 @@ import { GraphIcon } from "./Icon";
 import { HomeIcon } from "./Icon";
 import { PersonIcon } from "./Icon";
 import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function NavigationBar() {
-    const [activeIndex, setActiveIndex] = useState<number | null>(null);
+    const pathName = usePathname();
+    const [, setActiveIndex] = useState<number | null>(null);
 
     const handleNavClick = (index: number) => {
         setActiveIndex(index);
@@ -15,25 +18,31 @@ export default function NavigationBar() {
 
     return (
         <NavigationBarWrapper>
-            <IconWrapper $isActive={activeIndex === 0} onClick={() => handleNavClick(0)}>
-                <GraphIcon isActive={activeIndex === 0}/>
-                <span>그래프</span>
-            </IconWrapper>
-            <IconWrapper $isActive={activeIndex === 1} onClick={() => handleNavClick(1)}>
-                <HomeIcon isActive={activeIndex === 1}/>
-                <span>홈</span>
-            </IconWrapper>
-            <IconWrapper $isActive={activeIndex === 2} onClick={() => handleNavClick(2)}>
-                <PersonIcon isActive={activeIndex === 2}/>
-                <span>마이</span>
-            </IconWrapper>
+            <Link href={'/graph'}>
+                <IconWrapper $isActive={pathName === '/graph'}  onClick={() => handleNavClick(0)}>
+                    <GraphIcon isActive={pathName === '/graph'}/>
+                    <span>그래프</span>
+                </IconWrapper>
+            </Link>
+            <Link href={'/'}>
+                <IconWrapper $isActive={pathName === '/'} onClick={() => handleNavClick(1)}>
+                    <HomeIcon isActive={pathName === '/'}/>
+                    <span>홈</span>
+                </IconWrapper>
+            </Link>
+            <Link href={'/mypage'}>
+                <IconWrapper $isActive={pathName === '/mypage'} onClick={() => handleNavClick(2)}>
+                    <PersonIcon isActive={pathName === '/mypage'}/>
+                    <span>마이</span>
+                </IconWrapper>
+            </Link>
         </NavigationBarWrapper>
     )
 }
 
 const NavigationBarWrapper = styled.div`
     position: fixed;
-    bottom: 0;
+    bottom: 30px;
     left: 0;
     right: 0;
     background-color: #414142;

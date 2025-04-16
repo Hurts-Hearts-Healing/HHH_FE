@@ -107,10 +107,6 @@ export default function Login() {
         return null;
     }
 
-    // const handleBirthdayClick = () => {
-    //     setIsBirthdayActive(true);
-    // }
-
     return (
         <Wrapper>
             <Image src={Logo} alt="HHH" style={{width: 75, marginTop: 117}}/>

@@ -24,12 +24,13 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 126px;
-  height: 164px;
+  width: 115px;
+  min-width: 115px;
+  height: 100%;
   border-radius: 10px;
   background-color: #242424;
   border: 1px solid #414142;
-  padding: 16px 18px 20px;
+  padding: 18px 16px;
 `;
 
 const Icon = styled.div`
@@ -53,7 +54,6 @@ const TagWrapper = styled.div`
   align-items: center;
   background-color: #414142;
   border-radius: 30px;
-  width: 90px;
   height: 20px;
 `;
 
