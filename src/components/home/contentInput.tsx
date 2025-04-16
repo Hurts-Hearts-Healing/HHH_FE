@@ -8,7 +8,7 @@ export default function ContentInput() {
 
 const InputBox = styled.textarea`
   width: 100%;
-  height: 136px;
+  height: 120px;
   border-radius: 5px;
   border: none;
   background-color: #414142;
