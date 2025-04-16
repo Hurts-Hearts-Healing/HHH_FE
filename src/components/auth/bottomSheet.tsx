@@ -16,9 +16,10 @@ export default function BottomSheet({onClose}: BottomSheetProps) {
 
     const handleDateClick = (value: Value) => {
         if (value instanceof Date) {
-            setSelectedDate(value.toLocaleDateString());
+            const formattedDate = value.toLocaleDateString();
+            setSelectedDate(formattedDate);
             setIsClosing(true);  
-            setTimeout(onClose, 300);  
+            setTimeout(onClose, 300);
         }
     };
 

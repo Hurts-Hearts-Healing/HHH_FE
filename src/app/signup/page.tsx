@@ -20,14 +20,7 @@ export default function Login() {
     const [status, setStatus] = useState<EmailStatus>('INITIAL');
     const [timer, setTimer] = useState<number>(60);
     const [isBirthdayActive, setIsBirthdayActive] = useState<boolean | null>(null);
-
-    useEffect(() => {
-        if (email.trim()) {
-            if (status === 'INITIAL') setStatus('READY');
-        } else {
-            setStatus('INITIAL');
-        }
-    }, [email, status])
+    const emailRegEx = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/
 
     useEffect(() => {
         let interval: NodeJS.Timeout | undefined;
@@ -47,7 +40,6 @@ export default function Login() {
     }, [status])
 
     const checkEmail = (input: string): string | null => {
-        const emailRegEx = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/;
         return emailRegEx.test(input) ? null : "이메일 형식이 맞지 않습니다";
     }
 
@@ -56,6 +48,14 @@ export default function Login() {
         setEmail(inputValue)
         setError(checkEmail(inputValue));
     }
+
+    useEffect(() => {
+        if (email.trim() && emailRegEx.test(email)) {
+            if (status === 'INITIAL') setStatus('READY');
+        } else {
+            setStatus('INITIAL');
+        }
+    }, [email, status, emailRegEx])
 
     const handleButtonClick = () => {
         if (status === 'READY' || status==='RESEND') {
@@ -106,6 +106,11 @@ export default function Login() {
     if (isBirthdayActive === null) {
         return null;
     }
+
+    // const handleBirthdayClick = () => {
+    //     setIsBirthdayActive(true);
+    // }
+
     return (
         <Wrapper>
             <Image src={Logo} alt="HHH" style={{width: 75, marginTop: 117}}/>
@@ -121,7 +126,7 @@ export default function Login() {
                 <BirthdayInput 
                     $isBirthdayActive={isBirthdayActive} 
                     onClick={() => setIsBirthdayActive(true)} 
-                    tabIndex={0}
+                    tabIndex={0}    
                 >
                     생일을 입력하세요
                 </BirthdayInput>

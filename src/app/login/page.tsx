@@ -17,6 +17,7 @@ export default function Login() {
     if (!isMounted) {
         return null;
     }
+    
     return (
         <Wrapper>
             <Image src={Logo} alt="HHH" style={{width: 75, marginTop: 117}}/>
