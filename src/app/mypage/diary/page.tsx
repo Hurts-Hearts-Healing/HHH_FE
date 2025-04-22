@@ -5,6 +5,7 @@ import styled from "styled-components"
 import Image from "next/image";
 import PrevDayArrow from "../../../assets/imgs/mypage/prevDayArrow.svg";
 import NextDayArrow from "../../../assets/imgs/mypage/nextDayArrow.svg";
+import Sad from "../../../assets/imgs/home/sad.svg";
 import { useState } from "react";
 
 export default function DiaryCollection() {
@@ -41,7 +42,7 @@ export default function DiaryCollection() {
                 <Image src={NextDayArrow} alt=">" onClick={handleNextDay}/>
             </HeadWrapper>
             <ContainerWrapper>
-                <Emoji />
+                <Image src={Sad} alt="sad"/>
                 <h3>제목</h3>
                 <Line />
                 <ContentBox>
@@ -58,6 +59,7 @@ const Wrapper = styled.div`
     flex-direction: column;
     padding-left: 20px;
     padding-right: 20px;
+    padding-bottom: 104px;
     height: 100vh;
     width: 100%;
     align-items: center;
@@ -89,18 +91,10 @@ const ContainerWrapper = styled.div`
     width: 100%;
     height: 100%;
     flex-grow: 1;
-    /* padding-bottom: 79px; */
     > h3 {
         font-weight: 700;
         font-weight: 22px;
     }
-`;
-
-const Emoji = styled.div`
-    width: 44px;
-    height: 44px;
-    background-color: white;
-    flex-shrink: 0;
 `;
 
 const Line = styled.div`
@@ -114,7 +108,7 @@ const ContentBox = styled.div`
     width: 100%;
     background-color: #414142;
     border-radius: 20px;
-    height: calc(100vh - 40px - 79px - 30px - 100px - 55px); 
+    flex: 1;
 `;
 
 const Content = styled.div`
@@ -123,5 +117,4 @@ const Content = styled.div`
     color: white;
     overflow-y: auto;
     line-height: 25px;
-    height: 100%;
 `;

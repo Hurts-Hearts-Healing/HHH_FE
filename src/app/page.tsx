@@ -50,19 +50,22 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 5px 20px 104px 20px;
+  height: 100vh;
+  padding: 0px 20px 104px 20px;
 `;
 
 const LogoLine = styled.div`
   display: flex;
   width: 100%;
   height: auto;
+  margin-top: 18px;
 `;
 
 const DailyDiaryWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100%;
   margin-top: 13px;
 `;
 
@@ -123,4 +126,5 @@ const DiaryContentWrapper = styled.div`
   gap: 5px;
   margin-top: 20px;
   margin-bottom: 20px;
+  flex: 1;
 `;
