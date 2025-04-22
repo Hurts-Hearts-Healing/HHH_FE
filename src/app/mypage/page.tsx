@@ -11,6 +11,7 @@ import Arrow from "../../assets/imgs/mypage/arrow.svg";
 import NavigationBar from "@/components/common/navigationBar";
 import { useState } from "react";
 import Modal from "@/components/modal";
+import Link from "next/link";
 
 export default function MyPage() {
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -40,16 +41,18 @@ export default function MyPage() {
         </InfoWrapper>
         <Line />
         <ListWrapper>
-          <OptionWrapper>
-            <HeadWrapper>
-              <Image src={Diary} alt="" style={{ width: 20 }} />
-              <p>일기 모아보기</p>
-            </HeadWrapper>
-            <EndWrapper>
-              <p>내 감정 기록을 확인해보세요</p>
-              <Image src={Arrow} alt=">" />
-            </EndWrapper>
-          </OptionWrapper>
+          <Link href={'/mypage/diary'}>
+            <OptionWrapper>
+              <HeadWrapper>
+                <Image src={Diary} alt="" style={{ width: 20 }} />
+                <p>일기 모아보기</p>
+              </HeadWrapper>
+              <EndWrapper>
+                <p>내 감정 기록을 확인해보세요</p>
+                <Image src={Arrow} alt=">" />
+              </EndWrapper>
+            </OptionWrapper>
+          </Link>
           <OptionWrapper>
             <HeadWrapper>
               <Image src={Advertisement} alt="" style={{ width: 20 }} />
