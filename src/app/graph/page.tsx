@@ -68,8 +68,8 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 5px 20px;
   height: 100vh;
+  padding: 0px 20px 104px 20px;
 `;
 
 const GraphContainer = styled.div`
@@ -84,6 +84,7 @@ const LogoLine = styled.div`
   display: flex;
   width: 100%;
   height: auto;
+  margin-top: 18px;
 `;
 
 const TitleLine = styled.div`
@@ -179,20 +180,20 @@ const ButtonWrapper = styled.div`
 const AIAnalysisResultContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: calc(100vw - 40px);
-  height: 287px;
+  flex: 1;
+  width: 100%;
   background-color: rgba(65, 65, 66, 0.3);
   margin-top: 20px;
   border-radius: 15px;
-  padding: 12px 10px;
-  gap: 3px;
+  padding: 15px 10px;
+  gap: 6px;
+  overflow: hidden;
 `;
 
 const AIARTop = styled.div`
   display: flex;
   gap: 15px;
   align-items: center;
-  height: 26px;
 `;
 
 const TopCover = styled.div`
@@ -211,6 +212,6 @@ const AIARContent = styled.div`
   font-size: 13px;
   letter-spacing: -0.32px;
   line-height: 21px;
-  height: 232px;
+  height: 100%;
   overflow-y: scroll;
 `;
