@@ -120,6 +120,7 @@ export default function Login() {
                     </EmailInputWrapper>
                     <EmailButton $textColor={getTextColor()} $bgColor={getButtonColor()} onClick={handleButtonClick} disabled={isDisabled}>{getButtonText()}</EmailButton>
                 </EmailWrapper>
+                <AuthInput type="text" placeholder="이메일 인증 번호를 입력하세요" />
                 <BirthdayInput
                     $hasBirthdaySelect={!!birthday}
                     $isBirthdayActive={isBirthdayActive} 
