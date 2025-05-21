@@ -26,9 +26,9 @@ export default function AuthInput({ placeholder, type, value, onChange }: AuthIn
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (onChange) onChange(e);
         const inputValue = e.target.value;
         setError(validateInput(inputValue));
-        if (onChange) onChange(e);
     };
 
     const togglePassword = () => {

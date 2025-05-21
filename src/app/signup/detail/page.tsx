@@ -7,11 +7,20 @@ import { useState, useEffect } from "react";
 import BottomSheet from "@/components/auth/bottomSheet";
 import AuthButton from "@/components/auth/button";
 import ProgressBar from "@/components/progressBar";
+import { format, parse } from "date-fns";
+import { useSearchParams } from "next/navigation";
+import { SignUp } from "@/apis/auth";
 
 export default function SignUpDetail() {
+    const searchParams = useSearchParams();
+    const name = searchParams.get('name') ?? '';
+    const email = searchParams.get('email') ?? '';
+    const birthday = searchParams.get('birthday') ?? '';
+    const password = searchParams.get('password') ?? '';
+
     const [percent, setPercent] = useState<number>(0);
+    const [breakUpDate, setBreakUpDate] = useState<string | null>(null);
     const [isPartingActive, setIsPartingActive] = useState<boolean | null>(null);
-    const [parting, setParting] = useState<string | null>(null);
     
     useEffect(() => {
         setIsPartingActive(false);
@@ -21,6 +30,11 @@ export default function SignUpDetail() {
         return null;
     }
 
+    const formatBreakUpDate = (breakUpDate: string): string => {
+        const parsed = parse(breakUpDate, "yyyy년 M월 d일", new Date());
+        return format(parsed, "yyyy-MM-dd");
+    };
+
     const getStateMessage = (percent: number) => {
         if (percent === 100) return "완벽히 회복했어요 😊";
         if (percent >= 90) return "거의 다 회복했어요 🙂";
@@ -28,6 +42,27 @@ export default function SignUpDetail() {
         if (percent >= 30) return "아직은 슬퍼요 😢";
         return "많이 힘들어요 😭";
     }
+
+    const handleSignUp = async () => {
+        if (!breakUpDate || !percent) {
+          console.log('모든 항목을 입력해주세요');
+          return;
+        }
+    
+        try {
+          await SignUp({
+            name,
+            email,
+            birthday,
+            password,
+            breakupDate: formatBreakUpDate(breakUpDate),
+            emotionStatus: percent, 
+          });
+        } catch (error) {
+          console.error(error);
+          alert('오류가 발생했습니다.');
+        }
+      };
 
     return (
         <Wrapper>
@@ -39,12 +74,12 @@ export default function SignUpDetail() {
                         <p>하셨나요?</p>
                     </Label>
                     <PartingInput
-                        $hasPartingSelect={!!parting}
+                        $hasPartingSelect={!!breakUpDate}
                         $isPartingActive={isPartingActive} 
                         onClick={() => setIsPartingActive(true)} 
                         tabIndex={0}
                     >
-                        {parting ?? '날짜 선택하기'}
+                        {breakUpDate ?? '날짜 선택하기'}
                     </PartingInput>
                 </InputWrapper>
                 <InputWrapper>
@@ -62,9 +97,9 @@ export default function SignUpDetail() {
                 </InputWrapper>
             </InputsWrapper>
             <ButtonWrapper>
-                <AuthButton text="등록"/>
+                <AuthButton onClick={handleSignUp} text="회원가입"/>
             </ButtonWrapper>
-            {isPartingActive && <BottomSheet onSelectDate={(date) => setParting(date)} onClose={() => setIsPartingActive(false)}/>}
+            {isPartingActive && <BottomSheet onSelectDate={(date) => setBreakUpDate(date)} onClose={() => setIsPartingActive(false)}/>}
         </Wrapper>
     )
 }

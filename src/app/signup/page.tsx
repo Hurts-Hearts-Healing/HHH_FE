@@ -7,6 +7,8 @@ import Image from "next/image"
 import Logo from "../../assets/imgs/logo.svg";
 import BottomSheet from "@/components/auth/bottomSheet"
 import { useState, useEffect } from "react"
+import { format, parse } from "date-fns";
+import { useRouter } from "next/navigation"
 
 type EmailStatus = 'INITIAL' | 'READY' | 'WAITING' | 'RESEND';
 // INITIAL: 이메일 작성 전 상태
@@ -15,13 +17,23 @@ type EmailStatus = 'INITIAL' | 'READY' | 'WAITING' | 'RESEND';
 // RESEND: 인증 버튼 누르고 60초 뒤 상태 (재전송)
 
 export default function Login() {
+    const router = useRouter();
+    const [name, setName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
+    const [verificationNumber, setVerificationNumber] = useState<string>("");
+    const [birthday, setBirthday] = useState<string | null>(null);
+    const [password, setPassword] = useState<string>("");
+
     const [error, setError] = useState<string | null>(null);
     const [status, setStatus] = useState<EmailStatus>('INITIAL');
     const [timer, setTimer] = useState<number>(60);
     const [isBirthdayActive, setIsBirthdayActive] = useState<boolean | null>(null);
-    const [birthday, setBirthday] = useState<string | null>(null);
     const emailRegEx = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/
+
+    const formatBirthday = (birthday: string): string => {
+        const parsed = parse(birthday, "yyyy년 M월 d일", new Date());
+        return format(parsed, "yyyy-MM-dd");
+    };
 
     useEffect(() => {
         let interval: NodeJS.Timeout | undefined;
@@ -101,6 +113,10 @@ export default function Login() {
     const isDisabled: boolean = status === 'INITIAL' || status === 'WAITING';
 
     useEffect(() => {
+        console.log(birthday);
+    }, [birthday])
+
+    useEffect(() => {
         setIsBirthdayActive(false);
     }, []);
 
@@ -108,11 +124,28 @@ export default function Login() {
         return null;
     }
 
+    const handleNextClick = () => {
+        if (!name || !birthday || !email || !password) {
+          console.log('모든 정보를 입력하지 않음');
+          return;
+        }
+      
+        const formattedBirthday = formatBirthday(birthday);
+        const queryString = new URLSearchParams({
+          name,
+          email,
+          birthday: formattedBirthday,
+          password,
+        }).toString();
+      
+        router.push(`/signup/detail?${queryString}`);
+      };
+
     return (
         <Wrapper>
             <Image src={Logo} alt="HHH" style={{width: 75, marginTop: 117}}/>
             <InputWrapper>
-                <AuthInput type="text" placeholder="이름을 입력하세요"/>
+                <AuthInput value={name} type="text" onChange={(e) => setName(e.target.value)} placeholder="이름을 입력하세요"/>
                 <EmailWrapper>
                     <EmailInputWrapper>
                         <EmailInput value={email} onChange={handleEmailChange} type="email" placeholder="이메일을 입력하세요"/>
@@ -120,7 +153,7 @@ export default function Login() {
                     </EmailInputWrapper>
                     <EmailButton $textColor={getTextColor()} $bgColor={getButtonColor()} onClick={handleButtonClick} disabled={isDisabled}>{getButtonText()}</EmailButton>
                 </EmailWrapper>
-                <AuthInput type="text" placeholder="이메일 인증 번호를 입력하세요" />
+                <AuthInput value={verificationNumber} onChange={(e) => setVerificationNumber(e.target.value)} type="text" placeholder="이메일 인증 번호를 입력하세요" />
                 <BirthdayInput
                     $hasBirthdaySelect={!!birthday}
                     $isBirthdayActive={isBirthdayActive} 
@@ -129,10 +162,10 @@ export default function Login() {
                 >
                     {birthday ?? '생일을 입력하세요'}
                 </BirthdayInput>
-                <AuthInput type="password" placeholder="비밀번호를 입력하세요"/>
+                <AuthInput value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="비밀번호를 입력하세요"/>
             </InputWrapper>
             <ButtonWrapper>
-                <AuthButton text="회원가입"/>
+                <AuthButton text="다음" onClick={handleNextClick}/>
             </ButtonWrapper>
             {isBirthdayActive && <BottomSheet onSelectDate={(date) => setBirthday(date)} onClose={() => setIsBirthdayActive(false)}/>}
         </Wrapper>

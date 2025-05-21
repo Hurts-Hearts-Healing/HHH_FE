@@ -4,11 +4,12 @@ import styled from "styled-components"
 
 interface AuthButtonProps {
     text?: string;
+    onClick?: () => void;
 }
 
-export default function AuthButton({text}: AuthButtonProps) {
+export default function AuthButton({text, onClick}: AuthButtonProps) {
     return (
-        <Button>{text}</Button>
+        <Button onClick={onClick}>{text}</Button>
     )
 }
 
