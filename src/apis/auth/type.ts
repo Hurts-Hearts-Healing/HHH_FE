@@ -11,3 +11,8 @@ export type MatchVerificationNumberRequest = {
   email: string;
   verifyCode: string;
 }
+
+export type LoginRequest = {
+  email: string;
+  password: string;
+}

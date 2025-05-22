@@ -9,7 +9,7 @@ import BottomSheet from "@/components/auth/bottomSheet"
 import { useState, useEffect } from "react"
 import { format, parse } from "date-fns";
 import { useRouter } from "next/navigation"
-import { MatchVerificationNumber, RequestVerificationNumber } from "@/apis/auth"
+import { matchVerificationNumber, requestVerificationNumber } from "@/apis/auth"
 
 type EmailStatus = 'INITIAL' | 'READY' | 'WAITING' | 'RESEND';
 // INITIAL: 이메일 작성 전 상태
@@ -17,7 +17,7 @@ type EmailStatus = 'INITIAL' | 'READY' | 'WAITING' | 'RESEND';
 // WAITING: 인증 버튼 누르고 60초 지나기 전 상태
 // RESEND: 인증 버튼 누르고 60초 뒤 상태 (재전송)
 
-export default function Login() {
+export default function SignUp() {
     const router = useRouter();
     const [name, setName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
@@ -143,7 +143,7 @@ export default function Login() {
         if (status === "READY" || status === "RESEND") {
           try {
             console.log("요청 보내기 전");
-            await RequestVerificationNumber(email);
+            await requestVerificationNumber(email);
             console.log("요청 성공");
             setStatus("WAITING");
           } catch (error) {
@@ -154,7 +154,7 @@ export default function Login() {
 
     const handleVerifyButtonClick = async () => {
         try {
-            const res = await MatchVerificationNumber({
+            const res = await matchVerificationNumber({
                 email,
                 verifyCode: verificationNumber,
             });
