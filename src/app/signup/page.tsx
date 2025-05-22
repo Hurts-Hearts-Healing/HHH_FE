@@ -7,6 +7,9 @@ import Image from "next/image"
 import Logo from "../../assets/imgs/logo.svg";
 import BottomSheet from "@/components/auth/bottomSheet"
 import { useState, useEffect } from "react"
+import { format, parse } from "date-fns";
+import { useRouter } from "next/navigation"
+import { MatchVerificationNumber, RequestVerificationNumber } from "@/apis/auth"
 
 type EmailStatus = 'INITIAL' | 'READY' | 'WAITING' | 'RESEND';
 // INITIAL: 이메일 작성 전 상태
@@ -15,13 +18,24 @@ type EmailStatus = 'INITIAL' | 'READY' | 'WAITING' | 'RESEND';
 // RESEND: 인증 버튼 누르고 60초 뒤 상태 (재전송)
 
 export default function Login() {
+    const router = useRouter();
+    const [name, setName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
+    const [verificationNumber, setVerificationNumber] = useState<string>("");
+    const [birthday, setBirthday] = useState<string | null>(null);
+    const [password, setPassword] = useState<string>("");
+
     const [error, setError] = useState<string | null>(null);
+    const [verificationError, setVerificationError] = useState<boolean>(false);
     const [status, setStatus] = useState<EmailStatus>('INITIAL');
     const [timer, setTimer] = useState<number>(60);
     const [isBirthdayActive, setIsBirthdayActive] = useState<boolean | null>(null);
-    const [birthday, setBirthday] = useState<string | null>(null);
     const emailRegEx = /^[A-Za-z0-9]([-_.]?[A-Za-z0-9])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*\.[A-Za-z]{2,3}$/
+
+    const formatBirthday = (birthday: string): string => {
+        const parsed = parse(birthday, "yyyy년 M월 d일", new Date());
+        return format(parsed, "yyyy-MM-dd");
+    };
 
     useEffect(() => {
         let interval: NodeJS.Timeout | undefined;
@@ -58,12 +72,6 @@ export default function Login() {
         }
     }, [email, status, emailRegEx])
 
-    const handleButtonClick = () => {
-        if (status === 'READY' || status==='RESEND') {
-            setStatus('WAITING');
-        }
-    }
-
     const getButtonText = (): string => {
         switch (status) {
           case 'INITIAL':
@@ -94,11 +102,15 @@ export default function Login() {
               return '#AAAAAA';
             case 'READY':
             case 'RESEND':
-              return '#FFFFFF';
+              return '#FFFFFF';  
         }
       }
 
     const isDisabled: boolean = status === 'INITIAL' || status === 'WAITING';
+
+    useEffect(() => {
+        console.log(birthday);
+    }, [birthday])
 
     useEffect(() => {
         setIsBirthdayActive(false);
@@ -108,19 +120,80 @@ export default function Login() {
         return null;
     }
 
+
+
+    const handleNextClick = () => {
+        if (!name || !birthday || !email || !password) {
+          console.log('모든 정보를 입력하지 않음');
+          return;
+        }
+      
+        const formattedBirthday = formatBirthday(birthday);
+        const queryString = new URLSearchParams({
+          name,
+          email,
+          birthday: formattedBirthday,
+          password,
+        }).toString();
+      
+        router.push(`/signup/detail?${queryString}`);
+      };
+
+      const handleEmailButtonClick = async () => {
+        if (status === "READY" || status === "RESEND") {
+          try {
+            console.log("요청 보내기 전");
+            await RequestVerificationNumber(email);
+            console.log("요청 성공");
+            setStatus("WAITING");
+          } catch (error) {
+            console.log("요청 실패", error);
+          }
+        }
+      };
+
+    const handleVerifyButtonClick = async () => {
+        try {
+            const res = await MatchVerificationNumber({
+                email,
+                verifyCode: verificationNumber,
+            });
+
+            if (res.data === true) {
+                console.log('인증 성공')
+                setVerificationError(false);
+            } else {
+                console.log('인증 실패')
+                setVerificationError(true);
+            }
+            
+        } catch (error) {
+            console.log('서버오류: ', error)
+        }
+    }
+
     return (
         <Wrapper>
             <Image src={Logo} alt="HHH" style={{width: 75, marginTop: 117}}/>
             <InputWrapper>
-                <AuthInput type="text" placeholder="이름을 입력하세요"/>
+                <AuthInput value={name} type="text" onChange={(e) => setName(e.target.value)} placeholder="이름을 입력하세요"/>
+
                 <EmailWrapper>
                     <EmailInputWrapper>
                         <EmailInput value={email} onChange={handleEmailChange} type="email" placeholder="이메일을 입력하세요"/>
                         {error && <ErrorMessage>{error}</ErrorMessage>}
                     </EmailInputWrapper>
-                    <EmailButton $textColor={getTextColor()} $bgColor={getButtonColor()} onClick={handleButtonClick} disabled={isDisabled}>{getButtonText()}</EmailButton>
+                    <EmailButton $textColor={getTextColor()} $bgColor={getButtonColor()} onClick={handleEmailButtonClick} disabled={isDisabled} >{getButtonText()}</EmailButton>
                 </EmailWrapper>
-                <AuthInput type="text" placeholder="이메일 인증 번호를 입력하세요" />
+
+                <EmailWrapper>
+                    <EmailInputWrapper>
+                        <VerificationNumberInput value={verificationNumber} onChange={(e) => setVerificationNumber(e.target.value)} type="text" placeholder="이메일 인증 번호를 입력하세요"/>
+                        {verificationError && <ErrorMessage>이메일 인증 번호가 맞지 않습니다</ErrorMessage>}
+                    </EmailInputWrapper>
+                    <VerificationNumberButton onClick={handleVerifyButtonClick}>확인</VerificationNumberButton>
+                </EmailWrapper>
+
                 <BirthdayInput
                     $hasBirthdaySelect={!!birthday}
                     $isBirthdayActive={isBirthdayActive} 
@@ -129,10 +202,10 @@ export default function Login() {
                 >
                     {birthday ?? '생일을 입력하세요'}
                 </BirthdayInput>
-                <AuthInput type="password" placeholder="비밀번호를 입력하세요"/>
+                <AuthInput value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="비밀번호를 입력하세요"/>
             </InputWrapper>
             <ButtonWrapper>
-                <AuthButton text="회원가입"/>
+                <AuthButton text="다음" onClick={handleNextClick}/>
             </ButtonWrapper>
             {isBirthdayActive && <BottomSheet onSelectDate={(date) => setBirthday(date)} onClose={() => setIsBirthdayActive(false)}/>}
         </Wrapper>
@@ -226,4 +299,36 @@ const ErrorMessage = styled.p`
     font-size: 10px;
     color: #FF5151;
     margin-top: 5px;
+`;
+
+const VerificationNumberInput = styled.input`
+    width: 100%;
+    height: 40px;
+    padding-left: 15px;
+    padding-right: 15px;
+    background-color: #414142;
+    border-radius: 5px;
+    font-size: 13px;
+    outline: none;
+    border: none;
+    color: white;
+    &:focus {
+        border: 1px solid #18E7C1;
+    }
+    &::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+`;
+
+const VerificationNumberButton = styled.button`
+    width: 75px;
+    height: 40px;
+    background-color: #18E7C1;
+    border-radius: 5px;
+    border: none;
+    font-size: 13px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `;
