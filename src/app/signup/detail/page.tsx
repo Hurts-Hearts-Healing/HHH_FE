@@ -9,7 +9,7 @@ import AuthButton from "@/components/auth/button";
 import ProgressBar from "@/components/progressBar";
 import { format, parse } from "date-fns";
 import { useSearchParams } from "next/navigation";
-import { SignUp } from "@/apis/auth";
+import { signUp } from "@/apis/auth";
 import { useRouter } from "next/navigation";
 
 export default function SignUpDetail() {
@@ -53,7 +53,7 @@ export default function SignUpDetail() {
         }
     
         try {
-          await SignUp({
+          await signUp({
             name,
             email,
             birthday,
@@ -61,7 +61,7 @@ export default function SignUpDetail() {
             breakupDate: formatBreakUpDate(breakUpDate),
             emotionStatus: percent, 
           });
-          router.push('/')
+          router.push('/login')
         } catch (error) {
           console.error(error);
           alert('오류가 발생했습니다.');

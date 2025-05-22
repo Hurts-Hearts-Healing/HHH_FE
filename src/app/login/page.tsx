@@ -6,8 +6,15 @@ import AuthButton from "@/components/auth/button"
 import Image from "next/image"
 import Logo from "../../assets/imgs/logo.svg";
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { login } from "@/apis/auth"
+import { Cookie } from "@/utils/cookie"
 
 export default function Login() {
+    const router = useRouter();
+
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
     const [isMounted, setIsMounted] = useState(false); 
 
     useEffect(() => {
@@ -17,16 +24,33 @@ export default function Login() {
     if (!isMounted) {
         return null;
     }
+
+    const handleLoginButtonClick = async () => {
+        if (!email || !password) {
+            console.log('모든 항목을 입력해주세요')
+            return;
+        }
+        try {
+            const res = await login({email, password});
+            const token = res.data.token;
+            if (token) {
+                Cookie.set('accessToken', token, { path: '/' });
+            }
+            router.push('/')
+        } catch (error) {
+            console.log(error)
+        }
+    }
     
     return (
         <Wrapper>
             <Image src={Logo} alt="HHH" style={{width: 75, marginTop: 117}}/>
             <InputWrapper>
-                <AuthInput type="text" placeholder="아이디를 입력하세요"/>
-                <AuthInput type="password" placeholder="비밀번호를 입력하세요"/>
+                <AuthInput value={email} onChange={(e) => setEmail(e.target.value)} type="text" placeholder="이메일을 입력하세요"/>
+                <AuthInput value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="비밀번호를 입력하세요"/>
             </InputWrapper>
             <ButtonWrapper>
-                <AuthButton text="로그인"/>
+                <AuthButton onClick={handleLoginButtonClick} text="로그인"/>
                 <SignUpButtonWrapper>
                     <p>아직 회원이 아니신가요?</p>
                     <p className="highLight">회원가입</p>
