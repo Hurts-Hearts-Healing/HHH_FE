@@ -6,3 +6,8 @@ export type SignUpRequest = {
   breakupDate: string; // YYYY-MM-DD
   emotionStatus: number;
 };
+
+export type MatchVerificationNumberRequest = {
+  email: string;
+  verifyCode: string;
+}

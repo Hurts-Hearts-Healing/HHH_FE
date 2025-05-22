@@ -10,8 +10,11 @@ import ProgressBar from "@/components/progressBar";
 import { format, parse } from "date-fns";
 import { useSearchParams } from "next/navigation";
 import { SignUp } from "@/apis/auth";
+import { useRouter } from "next/navigation";
 
 export default function SignUpDetail() {
+    const router = useRouter();
+
     const searchParams = useSearchParams();
     const name = searchParams.get('name') ?? '';
     const email = searchParams.get('email') ?? '';
@@ -58,6 +61,7 @@ export default function SignUpDetail() {
             breakupDate: formatBreakUpDate(breakUpDate),
             emotionStatus: percent, 
           });
+          router.push('/')
         } catch (error) {
           console.error(error);
           alert('오류가 발생했습니다.');
