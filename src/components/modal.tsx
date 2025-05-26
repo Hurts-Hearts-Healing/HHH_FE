@@ -3,12 +3,29 @@
 import styled from "styled-components"
 import Image from "next/image";
 import Warning from "../assets/imgs/mypage/warning.svg";
+import { cancelMembership } from "@/apis/auth";
+import { useRouter } from "next/navigation";
 
 interface ModalProps {
     onClose: () => void;
 }
 
 export default function Modal({onClose}: ModalProps) {
+    const deleteCookie = (name: string) => {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+      };
+      
+    const router = useRouter();
+    const handleCancelMembershipClick = async () => {
+        try {
+            await cancelMembership();
+            deleteCookie("accessToken");
+            onClose();
+            router.push('/signup')
+        } catch (error) {
+            console.log(error);
+        }
+    }
     return (
         <ModalWrapper>
            <Wrapper>
@@ -19,7 +36,7 @@ export default function Modal({onClose}: ModalProps) {
                 </TextWrapper>
                 <ButtonWrapper>
                     <CancelButton onClick={onClose}>취소</CancelButton>
-                    <CheckButton>확인</CheckButton>
+                    <CheckButton onClick={handleCancelMembershipClick}>확인</CheckButton>
                 </ButtonWrapper>
            </Wrapper>
         </ModalWrapper>
