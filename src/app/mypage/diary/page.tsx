@@ -6,14 +6,18 @@ import Image from "next/image";
 import PrevDayArrow from "../../../assets/imgs/mypage/prevDayArrow.svg";
 import NextDayArrow from "../../../assets/imgs/mypage/nextDayArrow.svg";
 import Sad from "../../../assets/imgs/home/sad.svg";
+import Happy from "../../../assets/imgs/home/happy.svg";
+import Soso from "../../../assets/imgs/home/soso.svg";
 import { useEffect, useState } from "react";
-import { viewDiary } from "@/apis/diary";
-import { ViewDiaryResponseArray } from "@/apis/diary/type";
+import { viewDiary, viewEmotionEmoji } from "@/apis/diary";
+import { ViewDiaryResponseArray, ViewEmotionEmojiResponseArray } from "@/apis/diary/type";
 import Warning from "../../../assets/imgs/mypage/warning.svg";
 
 export default function DiaryCollection() {
     const [date, setDate] = useState(new Date());
     const [diaries, setDiaries] = useState<ViewDiaryResponseArray[]>([]);
+    const [emotions, setEmotions] = useState<ViewEmotionEmojiResponseArray[]>([]);
+    const [todayEmotion, setTodayEmotion] = useState<ViewEmotionEmojiResponseArray | null>(null);
     const [todayDiary, setTodayDiary] = useState<ViewDiaryResponseArray | null>(null);
 
     const formatDate = (date: Date, withDot = true) => {
@@ -58,6 +62,37 @@ export default function DiaryCollection() {
         const found = diaries.find(diary => diary.createdAt === todayStr);
         setTodayDiary(found ?? null);
     }, [date, diaries]);
+
+    useEffect(() => {
+        const fetchEmotions = async () => {
+            try {
+                const res = await viewEmotionEmoji();
+                setEmotions(res.data.emotionList);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchEmotions();
+    }, []);
+    
+    useEffect(() => {
+        if (!emotions || emotions.length === 0) return;
+    
+        const todayStr = formatDate(date, false);
+        const foundEmotion = emotions.find(emotion => emotion.createdAt === todayStr);
+        setTodayEmotion(foundEmotion ?? null);
+    }, [date, emotions]);
+
+    const getEmotionImage = (emotion: string) => {
+        switch (emotion) {
+            case "HAPPY":
+                return Happy;
+            case "SOSO":
+                return Soso;
+            case "SAD":
+                return Sad;
+        }
+    };
     
     return (
         <Wrapper>
@@ -67,20 +102,32 @@ export default function DiaryCollection() {
                 <Image src={NextDayArrow} alt=">" onClick={handleNextDay}/>
             </HeadWrapper>
             <ContainerWrapper>
+                {todayEmotion && (
+                    <Image src={getEmotionImage(todayEmotion?.emotion)} alt={todayEmotion?.emotion}/>
+                )}
                 {todayDiary ? (
                     <>
-                        <Image src={Sad} alt="sad"/>
-                        <h3>{todayDiary?.title}</h3>
+                        <h3>{todayDiary.title}</h3>
                         <Line />
                         <ContentBox>
-                            <Content>{todayDiary?.note}</Content>
+                        <Content>{todayDiary.note}</Content>
                         </ContentBox>
                     </>
-                ): (
-                    <NoDiaryWrapper>
-                        <Image src={Warning} alt="경고"/>
+                    ) : (
+                    !todayEmotion ? (
+                        <NoDiaryWrapper>
+                        <Image src={Warning} alt="경고" />
                         <p>작성된 일기가 없습니다</p>
-                    </NoDiaryWrapper>
+                        </NoDiaryWrapper>
+                    ) : (
+                        <>
+                        <h3>제목 없음</h3>
+                        <Line />
+                        <ContentBox>
+                            <Content>작성된 내용이 없습니다</Content>
+                        </ContentBox>
+                        </>
+                    )
                 )}
             </ContainerWrapper>
             <NavigationBar />
