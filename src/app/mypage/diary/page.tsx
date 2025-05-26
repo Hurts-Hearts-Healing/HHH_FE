@@ -6,16 +6,21 @@ import Image from "next/image";
 import PrevDayArrow from "../../../assets/imgs/mypage/prevDayArrow.svg";
 import NextDayArrow from "../../../assets/imgs/mypage/nextDayArrow.svg";
 import Sad from "../../../assets/imgs/home/sad.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { viewDiary } from "@/apis/diary";
+import { ViewDiaryResponseArray } from "@/apis/diary/type";
+import Warning from "../../../assets/imgs/mypage/warning.svg";
 
 export default function DiaryCollection() {
     const [date, setDate] = useState(new Date());
+    const [diaries, setDiaries] = useState<ViewDiaryResponseArray[]>([]);
+    const [todayDiary, setTodayDiary] = useState<ViewDiaryResponseArray | null>(null);
 
-    const formatDate = (date: Date) => {
+    const formatDate = (date: Date, withDot = true) => {
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const day = date.getDate().toString().padStart(2, '0');
-        return `${year}.${month}.${day}`;
+        return withDot ? `${year}.${month}.${day}` : `${year}-${month}-${day}`;
     };
     
     const handlePrevDay = () => {
@@ -24,7 +29,7 @@ export default function DiaryCollection() {
             newDate.setDate(newDate.getDate() - 1);
             return newDate;
         });
-    };
+    }; 
 
     const handleNextDay = () => {
         setDate(prevDate => {
@@ -33,6 +38,26 @@ export default function DiaryCollection() {
             return newDate
         })
     }
+
+    useEffect(() => {
+        const fetchDiary = async () => {
+            try {
+                const res = await viewDiary();
+                setDiaries(res.data.diaries);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchDiary();
+    }, [])
+
+    useEffect(() => {
+        if (!diaries || diaries.length === 0) return;
+    
+        const todayStr = formatDate(date, false);
+        const found = diaries.find(diary => diary.createdAt === todayStr);
+        setTodayDiary(found ?? null);
+    }, [date, diaries]);
     
     return (
         <Wrapper>
@@ -42,12 +67,21 @@ export default function DiaryCollection() {
                 <Image src={NextDayArrow} alt=">" onClick={handleNextDay}/>
             </HeadWrapper>
             <ContainerWrapper>
-                <Image src={Sad} alt="sad"/>
-                <h3>제목</h3>
-                <Line />
-                <ContentBox>
-                    <Content>내용</Content>
-                </ContentBox>
+                {todayDiary ? (
+                    <>
+                        <Image src={Sad} alt="sad"/>
+                        <h3>{todayDiary?.title}</h3>
+                        <Line />
+                        <ContentBox>
+                            <Content>{todayDiary?.note}</Content>
+                        </ContentBox>
+                    </>
+                ): (
+                    <NoDiaryWrapper>
+                        <Image src={Warning} alt="경고"/>
+                        <p>작성된 일기가 없습니다</p>
+                    </NoDiaryWrapper>
+                )}
             </ContainerWrapper>
             <NavigationBar />
         </Wrapper>
@@ -117,4 +151,13 @@ const Content = styled.div`
     color: white;
     overflow-y: auto;
     line-height: 25px;
+`;
+
+const NoDiaryWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    height: 100%;
 `;
