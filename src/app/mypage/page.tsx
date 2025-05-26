@@ -5,7 +5,6 @@ import Image from "next/image";
 import LogoRHL from "../../assets/imgs/logorhl.svg";
 import Person from "../../assets/imgs/person.svg";
 import Diary from "../../assets/imgs/mypage/diary.svg";
-import Advertisement from "../../assets/imgs/mypage/advertisement.svg";
 import Leave from "../../assets/imgs/mypage/leave.svg";
 import Arrow from "../../assets/imgs/mypage/arrow.svg";
 import NavigationBar from "@/components/common/navigationBar";
@@ -53,16 +52,6 @@ export default function MyPage() {
               </EndWrapper>
             </OptionWrapper>
           </Link>
-          <OptionWrapper>
-            <HeadWrapper>
-              <Image src={Advertisement} alt="" style={{ width: 20 }} />
-              <p>광고 보기</p>
-            </HeadWrapper>
-            <EndWrapper>
-              <p>무료로 광고를 보세요</p>
-              <Image src={Arrow} alt=">" />
-            </EndWrapper>
-          </OptionWrapper>
           <OptionWrapper onClick={handleButtonClick}>
             <HeadWrapper>
               <Image src={Leave} alt="" style={{ width: 20 }} />
