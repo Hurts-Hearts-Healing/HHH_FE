@@ -16,3 +16,11 @@ export type LoginRequest = {
   email: string;
   password: string;
 }
+
+export type GetUserInfoResponse = {
+  name: string;
+  email: string;
+  birthday: string; // YYYY-MM-DD
+  breakupDate: string; // YYYY-MM-DD
+  emotionStatus: number;
+}

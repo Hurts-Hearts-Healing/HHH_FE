@@ -8,15 +8,40 @@ import Diary from "../../assets/imgs/mypage/diary.svg";
 import Leave from "../../assets/imgs/mypage/leave.svg";
 import Arrow from "../../assets/imgs/mypage/arrow.svg";
 import NavigationBar from "@/components/common/navigationBar";
-import { useState } from "react";
+import { getUserInfo } from "@/apis/auth";
+import { useEffect, useState } from "react";
 import Modal from "@/components/modal";
 import Link from "next/link";
+import { GetUserInfoResponse } from "@/apis/auth/type";
 
 export default function MyPage() {
+  const [userInfo, setUserInfo] = useState<GetUserInfoResponse | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const handleButtonClick = () => {
     setShowModal(true);
+  };
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const res = await getUserInfo();
+        setUserInfo(res.data)
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchUserInfo();
+  }, [])
+
+  const getDday = (breakupDate?: string) => {
+    if (!breakupDate) return 0;
+
+    const today = new Date();
+    const breakup = new Date(breakupDate);
+    const diffTime = today.getTime() - breakup.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays + 1;
   };
 
   return (
@@ -29,13 +54,13 @@ export default function MyPage() {
       <ContentWrapper>
         <TitleWrapper>
           <span>이별한지</span>
-          <span className="color">3일차</span>
+          <span className="color">{getDday(userInfo?.breakupDate)}일차</span>
         </TitleWrapper>
         <InfoWrapper>
           <Image src={Person} alt="" />
           <TextWrapper>
-            <UserName>의진</UserName>
-            <Birthday>2007.09.20</Birthday>
+            <UserName>{userInfo?.name}</UserName>
+            <Birthday>{userInfo?.birthday.replaceAll("-", ".")}</Birthday>
           </TextWrapper>
         </InfoWrapper>
         <Line />
