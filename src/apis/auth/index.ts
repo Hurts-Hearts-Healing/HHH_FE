@@ -1,5 +1,5 @@
 import { instance } from '../axios';
-import { LoginRequest, MatchVerificationNumberRequest, SignUpRequest } from './type';
+import { GetUserInfoResponse, LoginRequest, MatchVerificationNumberRequest, SignUpRequest } from './type';
 
 // 회원가입
 export const signUp = async (data: SignUpRequest) => {
@@ -24,4 +24,9 @@ export const login = async (data: LoginRequest) => {
 // 회원 탈퇴
 export const cancelMembership = async () => {
   return await instance.delete('/api/user/deactivate');
+}
+
+// 현재 유저 정보 가져오기
+export const getUserInfo = async () => {
+  return await instance.get<GetUserInfoResponse>('/api/user')
 }
