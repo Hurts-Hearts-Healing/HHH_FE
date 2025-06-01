@@ -10,8 +10,72 @@ import Soso from "../assets/imgs/home/soso.svg";
 import Sad from "../assets/imgs/home/sad.svg";
 import AuthInput from "@/components/auth/input";
 import AuthButton from "@/components/auth/button";
+import { format, isSameDay, parseISO } from "date-fns";
+import { useState, useEffect } from "react";
+import {
+  postDiary,
+  postEmotion,
+  viewDiary,
+  viewEmotionEmoji,
+} from "@/apis/diary";
 
 export default function Home() {
+  const [diaryTitle, setDiaryTitle] = useState<string | null>(null);
+  const [diaryContent, setDiaryContent] = useState<string | null>(null);
+  const [todayEmotion, setTodayEmotion] = useState<string | null>(null);
+  const [hasTodayDiary, setHasTodayDiary] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const today = new Date();
+
+        const emotionRes = await viewEmotionEmoji();
+        const emotion = emotionRes.data.emotionList.find((e) =>
+          isSameDay(parseISO(e.createdAt), today)
+        );
+        if (emotion) setTodayEmotion(emotion.emotion);
+
+        const diaryRes = await viewDiary();
+        const diary = diaryRes.data.diaries.find((d) =>
+          isSameDay(parseISO(d.createdAt), today)
+        );
+        if (diary) setHasTodayDiary(true);
+      } catch (error) {
+        console.error("데이터 조회 실패:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handlePostDiary = async () => {
+    if (diaryTitle != null && diaryContent != null) {
+      postDiary({
+        title: diaryTitle,
+        note: diaryContent,
+      })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
+  const handleEmotion = (emoji: string) => {
+    postEmotion({
+      emotion: emoji,
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <Wrapper>
       <LogoLine>
@@ -27,19 +91,78 @@ export default function Home() {
           </Title>
         </TitleBar>
         <EmotionFrame>
-          <Image src={Happy} alt="happy" style={{ width: 47 }} />
-          <Image src={Soso} alt="soso" style={{ width: 47 }} />
-          <Image src={Sad} alt="sad" style={{ width: 47 }} />
+          {todayEmotion ? (
+            <>
+              <AfterEmoji>오늘 당신의 기분은</AfterEmoji>{" "}
+              <Image
+                src={
+                  todayEmotion === "HAPPY"
+                    ? Happy
+                    : todayEmotion === "SOSO"
+                    ? Soso
+                    : Sad
+                }
+                alt="Image"
+                style={{ width: 47 }}
+              />
+            </>
+          ) : (
+            <>
+              <Image
+                src={Happy}
+                alt="happy"
+                style={{ width: 47 }}
+                onClick={() => handleEmotion("HAPPY")}
+              />
+              <Image
+                src={Soso}
+                alt="soso"
+                style={{ width: 47 }}
+                onClick={() => handleEmotion("SOSO")}
+              />
+              <Image
+                src={Sad}
+                alt="sad"
+                style={{ width: 47 }}
+                onClick={() => handleEmotion("SAD")}
+              />
+            </>
+          )}
         </EmotionFrame>
-        <DiaryTitleWrapper>
-          <DiaryTitle>제목</DiaryTitle>
-          <AuthInput placeholder="일기 제목을 입력하세요."/>
-        </DiaryTitleWrapper>
-        <DiaryContentWrapper>
-          <DiaryTitle>감정 기록</DiaryTitle>
-          <ContentInput />
-        </DiaryContentWrapper>
-        <AuthButton text="저장" />
+        {hasTodayDiary ? (
+          <DiaryInputArea>
+            <DiaryTitleWrapper>
+              <AfterWroteDiary>
+                오늘의 감정 일기는 이미 작성되었어요.
+                <br />
+                오늘 작성한 감정 일기 내용을 기반으로
+                <br />
+                AI가 당신의 감정을 분석해줄거에요.
+                <br />
+                지금 바로 그래프 페이지에서 확인해보세요!
+              </AfterWroteDiary>
+            </DiaryTitleWrapper>
+          </DiaryInputArea>
+        ) : (
+          <DiaryInputArea>
+            <DiaryTitleWrapper>
+              <DiaryTitle>제목</DiaryTitle>
+              <AuthInput
+                placeholder="일기 제목을 입력하세요."
+                value={diaryTitle ?? ""}
+                onChange={(e) => setDiaryTitle(e.target.value)}
+              />
+            </DiaryTitleWrapper>
+            <DiaryContentWrapper>
+              <DiaryTitle>감정 기록</DiaryTitle>
+              <ContentInput
+                value={diaryContent ?? ""}
+                onChange={(e) => setDiaryContent(e.target.value)}
+              />
+            </DiaryContentWrapper>
+            <AuthButton text="저장" onClick={handlePostDiary} />
+          </DiaryInputArea>
+        )}
       </DailyDiaryWrapper>
       <NavigationBar />
     </Wrapper>
@@ -109,9 +232,11 @@ const DiaryTitleWrapper = styled.div`
   width: 100%;
   gap: 5px;
   margin-top: 25px;
+  align-items: center;
 `;
 
 const DiaryTitle = styled.div`
+  width: 100%;
   color: #fff;
   font-size: 15px;
   letter-spacing: -0.32px;
@@ -127,4 +252,25 @@ const DiaryContentWrapper = styled.div`
   margin-top: 20px;
   margin-bottom: 20px;
   flex: 1;
+`;
+
+const DiaryInputArea = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+`;
+
+const AfterWroteDiary = styled.p`
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  font-size: 18px;
+`;
+
+const AfterEmoji = styled.p`
+  font-size: 16px;
+  margin-right: -20px;
+  color: #fff;
+  width: auto;
 `;
