@@ -7,8 +7,147 @@ import LogoLHL from "../../assets/imgs/logolhl.svg";
 import Happy from "../../assets/imgs/home/happy.svg";
 import Soso from "../../assets/imgs/home/soso.svg";
 import Sad from "../../assets/imgs/home/sad.svg";
+import { useEffect, useState } from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Label,
+} from "recharts";
+
+type GraphType = "DAY" | "WEEK" | "MONTH";
+
+type GraphDatum = {
+  period: string;
+  happiness: number;
+  status: string;
+};
+
+const dummyDayData: GraphDatum[] = [
+  { period: "2025-05-21", happiness: 0.0, status: "매우 슬픔" },
+  { period: "2025-05-22", happiness: 5.0, status: "보통" },
+  { period: "2025-05-23", happiness: 7.0, status: "행복" },
+  { period: "2025-05-24", happiness: 2.0, status: "슬픔" },
+  { period: "2025-05-25", happiness: 8.0, status: "매우 행복" },
+  { period: "2025-05-26", happiness: 4.0, status: "보통" },
+];
+
+const dummyWeekData: GraphDatum[] = [
+  { period: "2025-05-18 ~ 2025-05-24", happiness: 2.5, status: "슬픔" },
+  { period: "2025-05-25 ~ 2025-05-31", happiness: 5.0, status: "보통" },
+  { period: "2025-06-01 ~ 2025-06-07", happiness: 6.5, status: "행복" },
+  { period: "2025-06-08 ~ 2025-06-14", happiness: 8.2, status: "매우 행복" },
+  { period: "2025-06-15 ~ 2025-06-21", happiness: 1.8, status: "매우 슬픔" },
+  { period: "2025-06-22 ~ 2025-06-28", happiness: 4.4, status: "보통" },
+  { period: "2025-06-29 ~ 2025-07-05", happiness: 7.7, status: "행복" },
+];
+
+const dummyMonthData: GraphDatum[] = [
+  { period: "2025-01", happiness: 3.3, status: "슬픔" },
+  { period: "2025-02", happiness: 4.1, status: "보통" },
+  { period: "2025-03", happiness: 6.7, status: "행복" },
+  { period: "2025-04", happiness: 7.9, status: "행복" },
+  { period: "2025-05", happiness: 8.6, status: "매우 행복" },
+  { period: "2025-06", happiness: 9.1, status: "매우 행복" },
+  { period: "2025-07", happiness: 5.0, status: "보통" },
+];
+
+function filterRecentDayData(data: GraphDatum[]): GraphDatum[] {
+  return data.sort((a, b) => (a.period > b.period ? 1 : -1)).slice(-7);
+}
+
+function filterRecentWeekData(data: GraphDatum[]): GraphDatum[] {
+  return data
+    .sort((a, b) => {
+      const aStart = a.period.split(" ~ ")[0];
+      const bStart = b.period.split(" ~ ")[0];
+      return aStart > bStart ? 1 : -1;
+    })
+    .slice(-6);
+}
+
+function filterRecentMonthData(data: GraphDatum[]): GraphDatum[] {
+  return data.sort((a, b) => (a.period > b.period ? 1 : -1)).slice(-6);
+}
+
+const CustomDot = (props: any) => {
+  const { cx, cy, payload } = props;
+  if (cx === undefined || cy === undefined) return null;
+
+  const status = payload.status;
+  let outerColor = "#5f97ff";
+  let innerColor = "#5f97ff";
+
+  if (status === "매우 슬픔" || status === "슬픔") {
+    outerColor = "rgba(255, 89, 89, 0.5)";
+    innerColor = "rgba(255, 89, 89, 1)";
+  } else if (status === "보통" || status === "행복") {
+    outerColor = "rgba(95, 151, 255, 0.5)";
+    innerColor = "rgba(95, 151, 255, 1)";
+  } else if (status === "매우 행복") {
+    outerColor = "rgba(24, 231, 193, 0.5)";
+    innerColor = "rgba(24, 231, 193, 1)";
+  }
+
+  return (
+    <>
+      <circle cx={cx} cy={cy} r={7} fill={outerColor} />
+      <circle cx={cx} cy={cy} r={5} fill={innerColor} />
+    </>
+  );
+};
 
 export default function Graph() {
+  const [graphType, setGraphType] = useState<GraphType>("DAY");
+  const [graphData, setGraphData] = useState<GraphDatum[]>([]);
+
+  const handleClick = (type: GraphType) => {
+    setGraphType(type);
+  };
+
+  const fetchGraphData = (type: GraphType) => {
+    if (type === "DAY") {
+      setGraphData(filterRecentDayData(dummyDayData));
+    } else if (type === "WEEK") {
+      setGraphData(filterRecentWeekData(dummyWeekData));
+    } else {
+      setGraphData(filterRecentMonthData(dummyMonthData));
+    }
+  };
+
+  useEffect(() => {
+    fetchGraphData(graphType);
+  }, [graphType]);
+
+  const formatXAxisTick = (str: string, graphType: GraphType) => {
+    if (graphType === "DAY") {
+      return str.slice(5, 7) + "/" + str.slice(8, 10);
+    }
+    if (graphType === "WEEK") {
+      const parts = str.split(" ~ ");
+      if (parts.length === 2) {
+        const [start, end] = parts;
+        return (
+          start.slice(5, 7) +
+          "/" +
+          start.slice(8, 10) +
+          "~" +
+          end.slice(5, 7) +
+          "/" +
+          end.slice(8, 10)
+        );
+      }
+      return str;
+    }
+    if (graphType === "MONTH") {
+      return str.slice(0, 4) + "/" + str.slice(5);
+    }
+    return str;
+  };
+
   return (
     <Wrapper>
       <LogoLine>
@@ -23,11 +162,173 @@ export default function Graph() {
       </TitleLine>
       <GraphWrapper>
         <ButtonWrapper>
-          <Day $onDayView={true}>일</Day>
-          <Week $onWeekView={false}>주</Week>
-          <Month $onMonthView={false}>월</Month>
+          <Day
+            $onDayView={graphType === "DAY"}
+            onClick={() => handleClick("DAY")}
+          >
+            일
+          </Day>
+          <Week
+            $onWeekView={graphType === "WEEK"}
+            onClick={() => handleClick("WEEK")}
+          >
+            주
+          </Week>
+          <Month
+            $onMonthView={graphType === "MONTH"}
+            onClick={() => handleClick("MONTH")}
+          >
+            월
+          </Month>
         </ButtonWrapper>
-        <GraphContainer></GraphContainer>
+        <GraphContainer>
+          {graphData.length > 0 ? (
+            <ResponsiveContainer
+              width="100%"
+              height={250}
+              style={{ marginLeft: "-20px" }}
+            >
+              <LineChart data={graphData}>
+                <defs>
+                  <linearGradient
+                    id="lineGradient"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="0%"
+                  >
+                    <stop offset="0%" stopColor="#7f7f7f" />
+                    <stop offset="100%" stopColor="#ffffff" />
+                  </linearGradient>
+                </defs>
+                <XAxis
+                  dataKey="period"
+                  tickFormatter={(str) => formatXAxisTick(str, graphType)}
+                  interval={0}
+                  textAnchor="end"
+                  tickLine={false}
+                  tick={(props) => {
+                    const { x, y, payload } = props;
+                    return (
+                      <text
+                        x={x}
+                        y={y}
+                        dy={10}
+                        fontSize={10}
+                        textAnchor="end"
+                        fill="#ccc"
+                        transform={`rotate(-10, ${x}, ${y})`}
+                      >
+                        {formatXAxisTick(payload.value, graphType)}
+                      </text>
+                    );
+                  }}
+                >
+                  <Label
+                    value="기간"
+                    position="insideBottom"
+                    offset={0}
+                    style={{
+                      fontSize: "10px",
+                      fill: "#fff",
+                      fontWeight: "bold",
+                    }}
+                  />
+                </XAxis>
+                <YAxis
+                  domain={[0, 10]}
+                  tickCount={6}
+                  tickLine={false}
+                  tick={(props) => {
+                    const { x, y, payload } = props;
+                    return (
+                      <text
+                        x={x - 2}
+                        y={y}
+                        dy={2}
+                        textAnchor="end"
+                        fontSize={10}
+                        fill="#fff"
+                      >
+                        {payload.value}
+                      </text>
+                    );
+                  }}
+                >
+                  <Label
+                    value="행복도"
+                    angle={-90}
+                    position="insideLeft"
+                    offset={30}
+                    style={{
+                      fontSize: "10px",
+                      fill: "#fff",
+                      fontWeight: "bold",
+                    }}
+                  />
+                </YAxis>
+                <Tooltip
+                  formatter={(value: number) => `${value}점`}
+                  labelFormatter={(label: string) => `기간: ${label}`}
+                />
+                <defs>
+                  <marker
+                    id="arrowup"
+                    markerWidth="6"
+                    markerHeight="6"
+                    refX="3"
+                    refY="3"
+                    orient="auto"
+                    markerUnits="strokeWidth"
+                  >
+                    <path d="M6,0 L0,3 L6,6 Z" fill="#fff" />
+                  </marker>
+                </defs>
+                <line
+                  x1={65}
+                  y1={5}
+                  x2={65}
+                  y2={215}
+                  stroke="#fff"
+                  strokeWidth={1}
+                  markerStart="url(#arrowup)"
+                />
+                <defs>
+                  <marker
+                    id="arrowright"
+                    markerWidth="6"
+                    markerHeight="6"
+                    refX="3"
+                    refY="3"
+                    orient="auto"
+                    markerUnits="strokeWidth"
+                  >
+                    <path d="M6,0 L0,3 L6,6 Z" fill="#fff" />
+                  </marker>
+                </defs>
+                <line
+                  x1={350}
+                  y1={215}
+                  x2={65}
+                  y2={215}
+                  stroke="#fff"
+                  strokeWidth={1}
+                  markerStart="url(#arrowright)"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="happiness"
+                  stroke="url(#lineGradient)"
+                  strokeWidth={2}
+                  dot={<CustomDot />}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <EmptyMessage>데이터가 없습니다.</EmptyMessage>
+          )}
+        </GraphContainer>
       </GraphWrapper>
       <AIAnalysisResultContainer>
         <AIARTop>
@@ -64,6 +365,13 @@ export default function Graph() {
   );
 }
 
+const EmptyMessage = styled.div`
+  color: #888;
+  font-size: 14px;
+  text-align: center;
+  line-height: 200px;
+`;
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -74,9 +382,8 @@ const Wrapper = styled.div`
 
 const GraphContainer = styled.div`
   width: calc(100vw - 40px);
-  height: 200px;
+  height: 250px;
   background-color: #414142;
-  padding: 10px;
   border-radius: 8px;
 `;
 
