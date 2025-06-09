@@ -12,3 +12,11 @@ export const getGraphDataWeek = async () => {
 export const getGraphDataMonth = async () => {
   return await instance.get<graphDataMonth>("/api/emotion/graph?period=MONTH");
 };
+
+export const analysisAI = async (id: string) => {
+  return await instance.post(`/api/emotion/analysis/${id}`);
+};
+
+export const getAIAnalysis = async () => {
+  return await instance.get("/api/emotion/analysis");
+};
