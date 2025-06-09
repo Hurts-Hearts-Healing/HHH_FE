@@ -2,8 +2,19 @@
 
 import styled from "styled-components";
 
-export default function ContentInput() {
-  return <InputBox placeholder="오늘의 감정을 기록하세요." />;
+interface ContentInputProps {
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+}
+
+export default function ContentInput({ value, onChange }: ContentInputProps) {
+  return (
+    <InputBox
+      placeholder="오늘의 감정을 기록하세요."
+      value={value}
+      onChange={onChange}
+    />
+  );
 }
 
 const InputBox = styled.textarea`
@@ -24,6 +35,6 @@ const InputBox = styled.textarea`
     color: rgba(255, 255, 255, 0.5);
   }
   &:focus {
-    border: 1px solid #18E7C1;
+    border: 1px solid #18e7c1;
   }
 `;
