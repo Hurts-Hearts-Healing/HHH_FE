@@ -10,7 +10,8 @@ import Soso from "../assets/imgs/home/soso.svg";
 import Sad from "../assets/imgs/home/sad.svg";
 import AuthInput from "@/components/auth/input";
 import AuthButton from "@/components/auth/button";
-import { format, isSameDay, parseISO } from "date-fns";
+import { isSameDay, parseISO } from "date-fns";
+import Warning from "../assets/imgs/mypage/warning.svg";
 import { useState, useEffect } from "react";
 import {
   postDiary,
@@ -131,17 +132,8 @@ export default function Home() {
         </EmotionFrame>
         {hasTodayDiary ? (
           <DiaryInputArea>
-            <DiaryTitleWrapper>
-              <AfterWroteDiary>
-                오늘의 감정 일기는 이미 작성되었어요.
-                <br />
-                오늘 작성한 감정 일기 내용을 기반으로
-                <br />
-                AI가 당신의 감정을 분석해줄거에요.
-                <br />
-                지금 바로 그래프 페이지에서 확인해보세요!
-              </AfterWroteDiary>
-            </DiaryTitleWrapper>
+            <Image src={Warning} alt="경고"></Image>
+            <p>오늘의 일기는 이미 작성되었어요</p>
           </DiaryInputArea>
         ) : (
           <DiaryInputArea>
@@ -219,7 +211,7 @@ const EmotionFrame = styled.div`
   margin-top: 20px;
   display: flex;
   background-color: #414142;
-  border-radius: 30px;
+  border-radius: 15px;
   height: 90px;
   justify-content: center;
   align-items: center;
@@ -258,14 +250,10 @@ const DiaryInputArea = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  flex: 1;
-`;
-
-const AfterWroteDiary = styled.p`
-  width: 100%;
-  text-align: center;
-  color: #fff;
-  font-size: 18px;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 20px;
 `;
 
 const AfterEmoji = styled.p`
