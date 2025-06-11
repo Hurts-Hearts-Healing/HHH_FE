@@ -49,7 +49,7 @@ export default function MyPage() {
       <Image
         src={LogoRHL}
         alt="HHH"
-        style={{ width: "75px", marginTop: "18px" }}
+        style={{ width: "75px", marginTop: "30px" }}
       />
       <ContentWrapper>
         <TitleWrapper>

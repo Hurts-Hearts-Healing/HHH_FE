@@ -79,9 +79,9 @@ export default function Home() {
 
   return (
     <Wrapper>
-      <LogoLine>
-        <Image src={Logo} alt="HHH" style={{ width: 75 }} />
-      </LogoLine>
+      {/* <LogoLine> */}
+        <Image src={Logo} alt="HHH" style={{ width: 75, marginTop: 30 }} />
+      {/* </LogoLine> */}
       <DailyDiaryWrapper>
         <TitleBar>
           <Title>
@@ -169,12 +169,12 @@ const Wrapper = styled.div`
   padding: 0px 20px 104px 20px;
 `;
 
-const LogoLine = styled.div`
-  display: flex;
-  width: 100%;
-  height: auto;
-  margin-top: 18px;
-`;
+// const LogoLine = styled.div`
+//   display: flex;
+//   width: 100%;
+//   height: auto;
+//   margin-top: 18px;
+// `;
 
 const DailyDiaryWrapper = styled.div`
   display: flex;

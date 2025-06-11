@@ -191,9 +191,9 @@ export default function Graph() {
 
   return (
     <Wrapper>
-      <LogoLine>
-        <Image src={LogoLHL} alt="HHH" style={{ width: 75 }} />
-      </LogoLine>
+      {/* <LogoLine> */}
+        <Image src={LogoLHL} alt="HHH" style={{ width: 75, marginTop: 30 }} />
+      {/* </LogoLine> */}
       <TitleLine>
         <Title>
           <Pol color={"Mint"}>감정 변화</Pol>
@@ -430,12 +430,12 @@ const GraphContainer = styled.div`
   border-radius: 8px;
 `;
 
-const LogoLine = styled.div`
-  display: flex;
-  width: 100%;
-  height: auto;
-  margin-top: 18px;
-`;
+// const LogoLine = styled.div`
+//   display: flex;
+//   width: 100%;
+//   height: auto;
+//   margin-top: 18px;
+// `;
 
 const TitleLine = styled.div`
   display: flex;
