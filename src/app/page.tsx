@@ -19,12 +19,15 @@ import {
   viewDiary,
   viewEmotionEmoji,
 } from "@/apis/diary";
+import { analysisAI } from "@/apis/graph";
+import { ViewDiaryResponse } from "@/apis/diary/type";
 
 export default function Home() {
   const [diaryTitle, setDiaryTitle] = useState<string | null>(null);
   const [diaryContent, setDiaryContent] = useState<string | null>(null);
   const [todayEmotion, setTodayEmotion] = useState<string | null>(null);
   const [hasTodayDiary, setHasTodayDiary] = useState<boolean>(false);
+  const [diary, setDiary] = useState<ViewDiaryResponse | any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,17 +54,28 @@ export default function Home() {
   }, []);
 
   const handlePostDiary = async () => {
-    if (diaryTitle != null && diaryContent != null) {
-      postDiary({
+    if (!diaryTitle || !diaryContent) return;
+
+    try {
+      const res = await postDiary({
         title: diaryTitle,
         note: diaryContent,
-      })
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      });
+
+      const createdDiaryId = res.data?.diaryId;
+
+      if (createdDiaryId) {
+        await analysisAI(createdDiaryId);
+      } else {
+        const today = new Date();
+        const diaryRes = await viewDiary();
+        const diary = diaryRes.data.diaries.find((d) =>
+          isSameDay(parseISO(d.createdAt), today)
+        );
+        if (diary) await analysisAI(diary.diaryId);
+      }
+    } catch (error) {
+      console.error("일기 저장 또는 분석 실패:", error);
     }
   };
 
@@ -80,7 +94,7 @@ export default function Home() {
   return (
     <Wrapper>
       {/* <LogoLine> */}
-        <Image src={Logo} alt="HHH" style={{ width: 75, marginTop: 30 }} />
+      <Image src={Logo} alt="HHH" style={{ width: 75, marginTop: 30 }} />
       {/* </LogoLine> */}
       <DailyDiaryWrapper>
         <TitleBar>

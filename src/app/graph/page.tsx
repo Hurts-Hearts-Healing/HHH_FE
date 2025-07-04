@@ -12,7 +12,6 @@ import {
   getGraphDataDay,
   getGraphDataMonth,
   getGraphDataWeek,
-  analysisAI,
   getAIAnalysis,
 } from "@/apis/graph";
 import { viewDiary, viewEmotionEmoji } from "@/apis/diary";
@@ -40,6 +39,13 @@ type Diaries = {
   createdAt: string; // YYYY-MM-DD
 };
 
+type AnalysisContent = {
+  userId: string;
+  diaryId: string;
+  emotion: string;
+  createdAt: string; // YYYY-MM-DD
+};
+
 type Emojies = {
   emotion: string;
   createdAt: string; // YYYY-MM-DD
@@ -63,6 +69,16 @@ function filterRecentMonthData(data: GraphDatum[]): GraphDatum[] {
   return data.sort((a, b) => (a.period > b.period ? 1 : -1)).slice(-6);
 }
 
+function formatEmotionText(raw: string) {
+  let formatted = raw.replace(/\n/g, "<br />");
+
+  formatted = formatted.replace(/\*{1,2}\s*/g, "• ");
+
+  formatted = formatted.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
+
+  return formatted;
+}
+
 export default function Graph() {
   const [graphType, setGraphType] = useState<GraphType>("DAY");
   const [graphData, setGraphData] = useState<GraphDatum[]>([]);
@@ -74,23 +90,44 @@ export default function Graph() {
   const [aiAnalysisResult, setAiAnalysisResult] = useState<string>("");
   const [showAIResult, setShowAIResult] = useState<boolean>(false);
   const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null);
+  const [selectedPeriod, setSelectedPeriod] = useState<string | null>(null);
 
   const handleDotClick = async (data: GraphDatum) => {
     if (graphType !== "DAY") return;
 
-    const diary = diaries.find((d) => d.createdAt === data.period);
-    const emotion = emojies.find((e) => e.createdAt === data.period)?.emotion;
+    const period = data.period;
 
+    if (showAIResult && selectedPeriod === period) {
+      setShowAIResult(false);
+      setSelectedPeriod(null);
+      return;
+    }
+
+    const diary = diaries.find((d) => d.createdAt === period);
     if (!diary) return;
 
+    const emoji = emojies.find((e) => e.createdAt === period);
+    if (!emoji) return;
+
     try {
-      await analysisAI(diary.diaryId);
-      const result = await getAIAnalysis();
-      setAiAnalysisResult(result.data.analysis);
-      setSelectedEmotion(emotion ?? null);
+      const analysisRes = await getAIAnalysis();
+      const analysisData: AnalysisContent[] = analysisRes.data.analysis;
+      const matchedAnalysis = analysisData.find(
+        (a) => a.createdAt === period && a.diaryId === diary.diaryId
+      );
+      if (!matchedAnalysis) return;
+
+      const formattedEmotion = formatEmotionText(matchedAnalysis.emotion);
+      const formattedNote = diary.note.replace(/\n/g, "<br />");
+
+      setAiAnalysisResult(
+        `${formattedEmotion}<br /><br /><strong>작성한 일기:</strong><br />${formattedNote}`
+      );
+      setSelectedEmotion(emoji.emotion);
       setShowAIResult(true);
+      setSelectedPeriod(period);
     } catch (error) {
-      console.error("AI 분석 에러:", error);
+      alert(`AI 분석 로딩 실패: ${error}`);
     }
   };
 
@@ -136,6 +173,9 @@ export default function Graph() {
       setGraphDay(GraphDayRes.data.graphData);
       setGraphWeek(GraphWeekRes.data.graphData);
       setGraphMonth(GraphMonthRes.data.graphData);
+
+      const initialData = filterRecentDayData(GraphDayRes.data.graphData);
+      setGraphData(initialData);
     } catch (error) {
       console.log(error);
     }
@@ -192,7 +232,7 @@ export default function Graph() {
   return (
     <Wrapper>
       {/* <LogoLine> */}
-        <Image src={LogoLHL} alt="HHH" style={{ width: 75, marginTop: 30 }} />
+      <Image src={LogoLHL} alt="HHH" style={{ width: 75, marginTop: 30 }} />
       {/* </LogoLine> */}
       <TitleLine>
         <Title>
@@ -400,7 +440,7 @@ export default function Graph() {
               <Image src={Sad} alt="sad" style={{ width: 21, height: 22 }} />
             )}
           </AIARTop>
-          <AIARContent>{aiAnalysisResult}</AIARContent>
+          <AIARContent dangerouslySetInnerHTML={{ __html: aiAnalysisResult }} />
         </AIAnalysisResultContainer>
       )}
       <NavigationBar />

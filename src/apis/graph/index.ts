@@ -1,5 +1,10 @@
 import { instance } from "../axios";
-import { graphDataDay, graphDataMonth, graphDataWeek } from "./type";
+import {
+  graphDataDay,
+  graphDataMonth,
+  graphDataWeek,
+  AIAnalysisType,
+} from "./type";
 
 export const getGraphDataDay = async () => {
   return await instance.get<graphDataDay>("/api/emotion/graph?period=DAY");
@@ -18,5 +23,5 @@ export const analysisAI = async (id: string) => {
 };
 
 export const getAIAnalysis = async () => {
-  return await instance.get("/api/emotion/analysis");
+  return await instance.get<AIAnalysisType>("/api/emotion/analysis");
 };

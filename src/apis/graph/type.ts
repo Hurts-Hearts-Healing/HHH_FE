@@ -27,3 +27,14 @@ export type graphMonthType = {
 export type graphDataMonth = {
   graphData: graphMonthType[];
 };
+
+export type AIAnalysisType = {
+  analysis: AIAnalysisContent[];
+};
+
+export type AIAnalysisContent = {
+  userId: string;
+  diaryId: string;
+  emotion: string;
+  createdAt: string; // YYYY-MM-DD
+};
